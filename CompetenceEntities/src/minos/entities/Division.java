@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Cacheable(true)
 @Entity
-@Table(name="tOrgStru")
+@Table(name="tOrgStru", schema="dbo")
 @NamedQuery(name="Division.findAll", query="SELECT d FROM Division d")
 public class Division implements Serializable {
 	private static final long serialVersionUID = 1L;

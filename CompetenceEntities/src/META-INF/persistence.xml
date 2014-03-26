@@ -9,7 +9,6 @@
 		<class>minos.entities.Journal</class>
 		<class>minos.entities.Level</class>
 		<class>minos.entities.PersonAddon</class>
-		<class>minos.entities.PersonLogin</class>
 		<class>minos.entities.Role</class>
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://192.168.56.2:1433;databaseName=gedr"/>

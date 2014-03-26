@@ -16,7 +16,7 @@ import java.sql.Timestamp;
  */
 @Cacheable(true)
 @Entity
-@Table(name="tPersona")
+@Table(name="tPersona", schema="dbo")
 @NamedQuery(name="Person.findAll", query="SELECT p FROM Person p")
 public class Person implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -62,12 +62,6 @@ public class Person implements Serializable {
 	@Column(name="Tab")
 	private String tab;
 
-/*
-	//bi-directional one-to-one association to PersonLogin
-	@ReadOnly(value=UpdateAction.IGNORE)
-	@OneToOne(mappedBy="person", fetch=FetchType.LAZY)
-	private PersonLogin personLogin;
-*/
 	public Person() { }
 
 	public int getId() {
