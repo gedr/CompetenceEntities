@@ -21,7 +21,7 @@ public class Level implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name="name", length=1000)
+	@Column(name="name", length=250)
 	private String name;
 
 	@Column(name="price")

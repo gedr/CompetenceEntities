@@ -16,13 +16,16 @@ import java.util.List;
 @Entity
 @Table(name="Competence", schema="Minos")
 @NamedQuery(name="Competence.findAll", query="SELECT c FROM Competence c")
-public class Competence implements Serializable {
+public class Competence implements Serializable, VarietyConst {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="id")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+    @TableGenerator(name="Competence_Gen", table="GenI", schema="Minos",  
+    		pkColumnName="TableName", valueColumnName="KeyValue",
+    		pkColumnValue="COMPETENCE_GEN", allocationSize=3)
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="Competence_Gen") 
+    private int id;    
 
 	@Column(name="name", length=1000)
 	private String name;
@@ -44,27 +47,29 @@ public class Competence implements Serializable {
 	private short version;
 
 	//bi-directional many-to-one association to Catalog
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="catalog_id", referencedColumnName="id")
 	private Catalog catalog;
 
 	//bi-directional many-to-one association to Competence
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="ancestor", referencedColumnName="id")
 	private Competence ancestorCompetence;
 
 	//bi-directional many-to-one association to Competence
-	@OneToMany(mappedBy="ancestorCompetence", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@OneToMany(mappedBy="ancestorCompetence", fetch=FetchType.LAZY, 
+			cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="ver")
 	private List<Competence> historyCompetences;
 	
 	//bi-directional many-to-one association to MinosIndicator
-	@OneToMany(mappedBy="competence", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@OneToMany(mappedBy="competence", fetch=FetchType.LAZY, 
+			cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="level item")
 	private List<Indicator> indicators;
 	
 	//uni-directional many-to-one association to Journal
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
 

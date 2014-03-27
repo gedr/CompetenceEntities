@@ -18,12 +18,15 @@ import java.sql.Timestamp;
 public class Journal implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="id")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+    @TableGenerator(name="Journal_Gen", table="GenL", schema="Minos",
+    		pkColumnName="TableName", valueColumnName="KeyValue",
+    		pkColumnValue="JOURNAL_GEN", allocationSize=10)
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="Journal_Gen") 
+    private long id;    
 
-	@Column(name="createMoment")
+	@Column(name="createMoment")	
 	private Timestamp createMoment;
 
 	@Column(name="editMoment")
@@ -48,11 +51,11 @@ public class Journal implements Serializable {
 
 	public Journal() { }
 
-	public int getId() {
+	public long getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -114,7 +117,7 @@ public class Journal implements Serializable {
 	
 	@Override
     public int hashCode() {
-        return id;
+        return Long.valueOf(id).hashCode();
     }
 
     @Override
@@ -130,5 +133,4 @@ public class Journal implements Serializable {
     public String toString() {
         return "Journal: [" + String.valueOf(id) + " ] ";
     }
-
 }

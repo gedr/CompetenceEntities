@@ -16,10 +16,13 @@ import javax.persistence.*;
 public class Role implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="id")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+    @TableGenerator(name="Role_Gen", table="GenI", schema="Minos",  
+    		pkColumnName="TableName", valueColumnName="KeyValue",
+    		pkColumnValue="ROLE_GEN", allocationSize=3)
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="Role_Gen") 
+    private int id;    
 
 	@Column(name="name", length=250)
 	private String name;

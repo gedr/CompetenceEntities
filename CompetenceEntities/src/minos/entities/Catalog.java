@@ -16,12 +16,15 @@ import java.util.List;
 @Entity
 @Table(name="Catalog", schema="Minos")
 @NamedQuery(name="Catalog.findAll", query="SELECT c FROM Catalog c")
-public class Catalog implements Serializable {
+public class Catalog implements Serializable, VarietyConst {
 	private static final long serialVersionUID = 1L;
 
+    @TableGenerator(name="Catalog_Gen", table="GenI", schema="Minos", 
+    		pkColumnName="TableName", valueColumnName="KeyValue",
+    		pkColumnValue="CATALOG_GEN", allocationSize=3)
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy=GenerationType.IDENTITY) 
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="Catalog_Gen") 
     private int id;    
     
     @Column(name = "name", length = 1000)
@@ -39,30 +42,30 @@ public class Catalog implements Serializable {
 	@Column(name="ver")
 	private short version;	
 
-	@OneToMany(mappedBy="catalog", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@OneToMany(mappedBy="catalog", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="item")
 	private List<Competence> competences;
 
     // catalog's tree
-    @ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+    @ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name="parent", referencedColumnName="id")    
 	private Catalog parentCatalog; 
 
-	@OneToMany(mappedBy="parentCatalog", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@OneToMany(mappedBy="parentCatalog", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="item")
 	private List<Catalog> subCatalogs;
 
 	// history tree
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="ancestor", referencedColumnName="id")
 	private Catalog ancestorCatalog;
 
-	@OneToMany(mappedBy="ancestorCatalog", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="ancestorCatalog", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="ver")
 	private List<Catalog> historyCatalogs;
 
 	//uni-directional many-to-one association to Journal
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
 

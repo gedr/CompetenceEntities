@@ -18,10 +18,13 @@ import java.util.List;
 public class Indicator implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="id")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+    @TableGenerator(name="Indicator_Gen", table="GenI", schema="Minos",
+    		pkColumnName="TableName", valueColumnName="KeyValue",
+    		pkColumnValue="INDICATOR_GEN", allocationSize=3)
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="Indicator_Gen") 
+    private int id;    
 
 	@Column(name="item")
 	private short item;
@@ -36,27 +39,28 @@ public class Indicator implements Serializable {
 	private short version;
 
 	//bi-directional many-to-one association to Competence
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="competence_id", referencedColumnName="id")
 	private Competence competence;
 
 	//bi-directional many-to-one association to Indicator
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="ancestor", referencedColumnName="id")
 	private Indicator ancestorIndicator;
 
 	//bi-directional many-to-one association to Indicator
-	@OneToMany(mappedBy="ancestorIndicator", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@OneToMany(mappedBy="ancestorIndicator", fetch=FetchType.LAZY, 
+			cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="ver")
 	private List<Indicator> historyIndicators;
 
 	//uni-directional many-to-one association to Level
-	@ManyToOne(cascade={CascadeType.PERSIST})
+	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="level_id", referencedColumnName="id")
 	private Level level;
 
 	//uni-directional many-to-one association to Journal
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
 
