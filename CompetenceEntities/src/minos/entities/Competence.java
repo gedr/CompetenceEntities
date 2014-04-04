@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name="Competence", schema="Minos")
 @NamedQuery(name="Competence.findAll", query="SELECT c FROM Competence c")
-public class Competence implements Serializable, VarietyConst {
+public class Competence implements Serializable, VarietyConst, StatusConst {
 	private static final long serialVersionUID = 1L;
 
     @TableGenerator(name="Competence_Gen", table="GenI", schema="Minos",  

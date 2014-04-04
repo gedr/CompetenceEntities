@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name="Catalog", schema="Minos")
 @NamedQuery(name="Catalog.findAll", query="SELECT c FROM Catalog c")
-public class Catalog implements Serializable, VarietyConst {
+public class Catalog implements Serializable, VarietyConst, StatusConst {
 	private static final long serialVersionUID = 1L;
 
     @TableGenerator(name="Catalog_Gen", table="GenI", schema="Minos", 
@@ -61,7 +61,7 @@ public class Catalog implements Serializable, VarietyConst {
 	private Catalog ancestorCatalog;
 
 	@OneToMany(mappedBy="ancestorCatalog", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@OrderBy(value="ver")
+	@OrderBy(value="version")
 	private List<Catalog> historyCatalogs;
 
 	//uni-directional many-to-one association to Journal
@@ -69,10 +69,6 @@ public class Catalog implements Serializable, VarietyConst {
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
 
-	public static final short CATALOG_STATUS_ACTIVE		= 0;
-	public static final short CATALOG_STATUS_HISTORY	= 1;
-	public static final short CATALOG_STATUS_DELETE		= 2;
-	
 	public Catalog() { }
 
    	public Catalog(String name, short item, short status, short variety, short version,

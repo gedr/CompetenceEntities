@@ -35,13 +35,11 @@ public class Journal implements Serializable {
 	@Column(name="removeMoment")
 	private Timestamp removeMoment;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="creator_id", referencedColumnName="tPersonaId")
-	private Person creator;
+	@Column(name="creator_id")
+	private int creatorID;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="editor_id", referencedColumnName="tPersonaId")
-	private Person editor;
+	@Column(name="editor_id")
+	private int editorID;
 
 	@Column(name="creatorHost", length=250)
 	private String creatorHost;
@@ -50,6 +48,17 @@ public class Journal implements Serializable {
 	private String editorHost;
 
 	public Journal() { }
+	
+	public Journal(Timestamp createMoment, Timestamp editMoment, Timestamp removeMoment, 
+			int creatorID, int editorID, String creatorHost, String editorHost) { 
+		this.createMoment = createMoment;
+		this.editMoment = editMoment;
+		this.removeMoment = removeMoment;
+		this.creatorID = creatorID;
+		this.editorID = editorID;
+		this.creatorHost = creatorHost;
+		this.editorHost = editorHost;		
+	}
 
 	public long getId() {
 		return this.id;
@@ -83,20 +92,20 @@ public class Journal implements Serializable {
 		this.removeMoment = removeMoment;
 	}
 
-	public Person getCreator() {
-		return this.creator;
+	public int getCreatorID() {
+		return this.creatorID;
 	}
 
-	public void setCreator(Person creator) {
-		this.creator = creator;
+	public void setCreatorID(int creatorID) {
+		this.creatorID = creatorID;
 	}
 
-	public Person getEditor() {
-		return this.editor;
+	public int getEditorID() {
+		return this.editorID;
 	}
 
-	public void setEditor(Person editor) {
-		this.editor = editor;
+	public void setEditorID(int editorID) {
+		this.editorID = editorID;
 	}
 
 	public String getCreatorHost() {

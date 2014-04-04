@@ -15,7 +15,7 @@ import java.util.List;
 @Entity
 @Table(name="Indicator", schema="Minos")
 @NamedQuery(name="Indicator.findAll", query="SELECT i FROM Indicator i")
-public class Indicator implements Serializable {
+public class Indicator implements Serializable, StatusConst {
 	private static final long serialVersionUID = 1L;
 
     @TableGenerator(name="Indicator_Gen", table="GenI", schema="Minos",
