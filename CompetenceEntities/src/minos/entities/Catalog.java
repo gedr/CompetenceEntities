@@ -21,7 +21,7 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
 
     @TableGenerator(name="Catalog_Gen", table="GenI", schema="Minos", 
     		pkColumnName="TableName", valueColumnName="KeyValue",
-    		pkColumnValue="CATALOG_GEN", allocationSize=3)
+    		pkColumnValue="CATALOG_GEN", allocationSize=1)
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy=GenerationType.TABLE, generator="Catalog_Gen") 
@@ -65,7 +65,7 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
 	private List<Catalog> historyCatalogs;
 
 	//uni-directional many-to-one association to Journal
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
 

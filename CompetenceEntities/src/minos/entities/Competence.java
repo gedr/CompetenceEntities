@@ -21,7 +21,7 @@ public class Competence implements Serializable, VarietyConst, StatusConst {
 
     @TableGenerator(name="Competence_Gen", table="GenI", schema="Minos",  
     		pkColumnName="TableName", valueColumnName="KeyValue",
-    		pkColumnValue="COMPETENCE_GEN", allocationSize=3)
+    		pkColumnValue="COMPETENCE_GEN", allocationSize=1)
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy=GenerationType.TABLE, generator="Competence_Gen") 
@@ -59,7 +59,7 @@ public class Competence implements Serializable, VarietyConst, StatusConst {
 	//bi-directional many-to-one association to Competence
 	@OneToMany(mappedBy="ancestorCompetence", fetch=FetchType.LAZY, 
 			cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@OrderBy(value="ver")
+	@OrderBy(value="version")
 	private List<Competence> historyCompetences;
 	
 	//bi-directional many-to-one association to MinosIndicator
@@ -69,7 +69,7 @@ public class Competence implements Serializable, VarietyConst, StatusConst {
 	private List<Indicator> indicators;
 	
 	//uni-directional many-to-one association to Journal
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
 

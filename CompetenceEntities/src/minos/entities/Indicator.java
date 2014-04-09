@@ -20,7 +20,7 @@ public class Indicator implements Serializable, StatusConst {
 
     @TableGenerator(name="Indicator_Gen", table="GenI", schema="Minos",
     		pkColumnName="TableName", valueColumnName="KeyValue",
-    		pkColumnValue="INDICATOR_GEN", allocationSize=3)
+    		pkColumnValue="INDICATOR_GEN", allocationSize=1)
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy=GenerationType.TABLE, generator="Indicator_Gen") 
@@ -51,7 +51,7 @@ public class Indicator implements Serializable, StatusConst {
 	//bi-directional many-to-one association to Indicator
 	@OneToMany(mappedBy="ancestorIndicator", fetch=FetchType.LAZY, 
 			cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@OrderBy(value="ver")
+	@OrderBy(value="version")
 	private List<Indicator> historyIndicators;
 
 	//uni-directional many-to-one association to Level
@@ -60,7 +60,7 @@ public class Indicator implements Serializable, StatusConst {
 	private Level level;
 
 	//uni-directional many-to-one association to Journal
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
 

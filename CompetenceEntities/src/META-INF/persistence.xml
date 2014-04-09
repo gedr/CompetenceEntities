@@ -10,6 +10,9 @@
 		<class>minos.entities.Level</class>
 		<class>minos.entities.PersonAddon</class>
 		<class>minos.entities.Role</class>
+		<class>minos.entities.ProfilePatternElement</class>
+		<class>minos.entities.ProfilePattern</class>
+		<class>minos.entities.StringAttr</class>
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://192.168.56.2:1433;databaseName=gedr"/>
 			<property name="javax.persistence.jdbc.user" value="sa"/>

@@ -20,7 +20,7 @@ public class Journal implements Serializable {
 
     @TableGenerator(name="Journal_Gen", table="GenL", schema="Minos",
     		pkColumnName="TableName", valueColumnName="KeyValue",
-    		pkColumnValue="JOURNAL_GEN", allocationSize=10)
+    		pkColumnValue="JOURNAL_GEN", allocationSize=1)
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy=GenerationType.TABLE, generator="Journal_Gen") 
@@ -32,8 +32,8 @@ public class Journal implements Serializable {
 	@Column(name="editMoment")
 	private Timestamp editMoment;
 	
-	@Column(name="removeMoment")
-	private Timestamp removeMoment;
+	@Column(name="deleteMoment")
+	private Timestamp deleteMoment;
 	
 	@Column(name="creator_id")
 	private int creatorID;
@@ -41,23 +41,47 @@ public class Journal implements Serializable {
 	@Column(name="editor_id")
 	private int editorID;
 
+	@Column(name="deleter_id")
+	private int deleterID;
+	
 	@Column(name="creatorHost", length=250)
 	private String creatorHost;
 
 	@Column(name="editorHost", length=250)
 	private String editorHost;
 
+	@Column(name="deleterHost", length=250)
+	private String deleterHost;
+
+	@Column(name="creatorLogin", length=250)
+	private String creatorLogin;
+
+	@Column(name="editorLogin", length=250)
+	private String editorLogin;
+
+	@Column(name="deleterLogin", length=250)
+	private String deleterLogin;
+
 	public Journal() { }
 	
-	public Journal(Timestamp createMoment, Timestamp editMoment, Timestamp removeMoment, 
-			int creatorID, int editorID, String creatorHost, String editorHost) { 
+	public Journal(Timestamp createMoment, int creatorID, String creatorHost,  String creatorLogin,
+			Timestamp editMoment, int editorID, String editorHost, String editorLogin,
+			Timestamp deleteMoment, int deleterID, String deleterHost, String deleterLogin ) { 
 		this.createMoment = createMoment;
 		this.editMoment = editMoment;
-		this.removeMoment = removeMoment;
+		this.deleteMoment = deleteMoment;
+		
 		this.creatorID = creatorID;
 		this.editorID = editorID;
+		this.deleterID = deleterID;
+		
 		this.creatorHost = creatorHost;
 		this.editorHost = editorHost;		
+		this.deleterHost = deleterHost;
+
+		this.creatorLogin = creatorLogin;
+		this.editorLogin = editorLogin;		
+		this.deleterLogin = deleterLogin;
 	}
 
 	public long getId() {
@@ -84,12 +108,12 @@ public class Journal implements Serializable {
 		this.editMoment = editMoment;
 	}
 
-	public Timestamp getRemoveMoment() {
-		return this.removeMoment;
+	public Timestamp getDeleteMoment() {
+		return this.deleteMoment;
 	}
 
-	public void setRemoveMoment(Timestamp removeMoment) {
-		this.removeMoment = removeMoment;
+	public void setDeleteMoment(Timestamp deleteMoment) {
+		this.deleteMoment = deleteMoment;
 	}
 
 	public int getCreatorID() {
@@ -107,6 +131,14 @@ public class Journal implements Serializable {
 	public void setEditorID(int editorID) {
 		this.editorID = editorID;
 	}
+	
+	public int getDeleterID() {
+		return deleterID;
+	}
+
+	public void setDeleterID(int deleterID) {
+		this.deleterID = deleterID;
+	}
 
 	public String getCreatorHost() {
 		return this.creatorHost;
@@ -122,6 +154,38 @@ public class Journal implements Serializable {
 
 	public void setEditorHost(String editorHost) {
 		this.editorHost = editorHost;
+	}
+
+	public String getDeleterHost() {
+		return this.deleterHost;
+	}
+
+	public void setDeleterHost(String deleterHost) {
+		this.deleterHost = deleterHost;
+	}	
+	
+	public String getCreatorLogin() {
+		return this.creatorLogin;
+	}
+
+	public void setCreatorLogin(String creatorLogin) {
+		this.creatorLogin = creatorLogin;
+	}
+
+	public String getEditorLogin() {
+		return this.editorLogin;
+	}
+
+	public void setEditorLogin(String editorLogin) {
+		this.editorLogin = editorLogin;
+	}
+
+	public String getDeleterLogin() {
+		return this.deleterLogin;
+	}
+
+	public void setDeleterLogin(String deleterLogin) {
+		this.deleterLogin = deleterLogin;
 	}
 	
 	@Override
