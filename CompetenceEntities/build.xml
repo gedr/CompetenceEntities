@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project basedir="." default="make" name="MinosCompetenceEntities">
+
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+
+	
+	<path id="openJPA.userclasspath">
+         <pathelement location="c:/DevTools/Lib/java/apache-openjpa-2.2.2/openjpa-all-2.2.2.jar"/> 
+		 <!-- <pathelement location="d:/dev/lib/apache-openjpa-2.2.2/openjpa-all-2.2.2.jar"/>  -->
+    </path>
+	
+	<path id="openJPA.enhancement.classpath">
+		<pathelement location="build/classes"/>
+		
+		<!-- lib contains all of the jars that came with the OpenJPA binary download -->
+		<fileset dir="c:/DevTools/Lib/java/apache-openjpa-2.2.2/">
+		<!-- <fileset dir="d:/dev/lib/apache-openjpa-2.2.2/"> -->
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	
+	<target name="init">
+        <mkdir dir="build/classes"/>
+        <copy includeemptydirs="false" todir="build/classes">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+	<target name="clean">
+        <delete dir="build/classes"/>
+    </target>
+    
+	<target depends="clean" name="cleanall"/>
+    
+	<target depends="build-project" name="build"/>
+
+	<target name="enhance" depends="build">
+		<!-- define the openjpac task -->
+		<taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask">
+			<classpath refid="openJPA.enhancement.classpath"/>
+		</taskdef>
+
+
+		<!-- invoke enhancer the enhancer -->
+		<openjpac>
+			<classpath refid="openJPA.enhancement.classpath"/>
+		</openjpac>
+		
+		<echo message="Enhancing complete."/>
+	</target>
+
+
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="build/classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="openJPA.userclasspath"/>
+        </javac>
+    </target>
+
+
+	<target name="make_jar">
+		<jar destfile="build/CompetenceEntities.jar" basedir="build/classes" />
+	</target>
+	
+	<target name="make" depends="cleanall, build, enhance, make_jar"/>
+              	
+</project>

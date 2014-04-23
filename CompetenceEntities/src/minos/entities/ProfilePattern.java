@@ -17,7 +17,7 @@ import java.util.List;
 @Entity
 @Table(name="ProfilePattern", schema="Minos")
 @NamedQuery(name="ProfilePattern.findAll", query="SELECT p FROM ProfilePattern p")
-public class ProfilePattern implements Serializable {
+public class ProfilePattern implements Serializable, StatusConst {
 	private static final long serialVersionUID = 1L;
 
 	@TableGenerator(name="PP_Gen", table="GenI", schema="Minos",  
@@ -46,6 +46,9 @@ public class ProfilePattern implements Serializable {
 
 	@Column(name="status")
 	private short status;
+	
+	@Column(name="ver")
+	private short version;	
 
 	@Column(name="timePoint")
 	private Timestamp timePoint;
@@ -55,16 +58,30 @@ public class ProfilePattern implements Serializable {
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
 
+	//bi-directional many-to-one association to Catalog
+	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinColumn(name="catalog_id", referencedColumnName="id")
+	private Catalog catalog;
+	
 	//bi-directional many-to-one association to MinosIndicator
 	@OneToMany(mappedBy="profilePattern", fetch=FetchType.LAZY, 
 			cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="item")
 	private List<ProfilePatternElement> profilePatternElements;
+	
+	// history tree
+	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinColumn(name="ancestor", referencedColumnName="id")
+	private ProfilePattern ancestorProfilePattern;
+
+	@OneToMany(mappedBy="ancestorProfilePattern", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OrderBy(value="version")
+	private List<ProfilePattern> historyProfilePatterns;
 		
 	public ProfilePattern() { }
 	
 	public ProfilePattern(String name, String descr, long filialMask, int item, 
-			short postMask, short status, Timestamp timePoint) {
+			short postMask, short status, Timestamp timePoint, Catalog catalog) {
 		this.name = name;
 		this.description = descr;
 		this.filialMask = filialMask;
@@ -72,6 +89,7 @@ public class ProfilePattern implements Serializable {
 		this.postMask = postMask;
 		this.status = status;
 		this.timePoint = timePoint;		
+		this.catalog = catalog;
 	}
 	
 	public int getId() {
@@ -145,6 +163,22 @@ public class ProfilePattern implements Serializable {
 	public void setTimePoint(Timestamp timePoint) {
 		this.timePoint = timePoint;
 	}
+	
+	public Catalog getCatalog() {
+		return this.catalog;
+	}
+
+	public void setCatalog(Catalog catalog) {
+		this.catalog = catalog;
+	}
+	
+	public short getVersion() {
+		return this.version;
+	}
+
+	public void setVersion(short ver) {
+		this.version = ver;
+	}
 
 	public List<ProfilePatternElement> getProfilePatternElements() {
 		return this.profilePatternElements;
@@ -165,6 +199,18 @@ public class ProfilePattern implements Serializable {
 		if ( ( profilePatternElements == null ) || ( element == null ) ) return element;		
 		if ( profilePatternElements.remove( element )) element.setProfilePattern( null );
 		return element;
+	}
+	
+	public ProfilePattern getAncestorProfilePattern() {
+		return this.ancestorProfilePattern;
+	}
+
+	public void setAncestorProfilePattern(ProfilePattern ancestorProfilePattern) {
+		this.ancestorProfilePattern = ancestorProfilePattern;
+	}
+
+	public List<ProfilePattern> getHistoryProfilePatterns() {
+		return this.historyProfilePatterns;
 	}
 	
 	@Override

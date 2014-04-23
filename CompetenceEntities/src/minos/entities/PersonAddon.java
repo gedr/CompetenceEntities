@@ -10,6 +10,7 @@ import javax.persistence.*;
  * 
  */
 @Entity
+@Table(name="PersonAddon", schema="Minos")
 @NamedQuery(name="PersonAddon.findAll", query="SELECT p FROM PersonAddon p")
 public class PersonAddon implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -70,5 +71,4 @@ public class PersonAddon implements Serializable {
     public String toString() {
         return "PersonAddon: [" + String.valueOf(id) + " ] ";
     }
-
 }

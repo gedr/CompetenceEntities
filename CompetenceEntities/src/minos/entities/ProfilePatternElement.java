@@ -28,6 +28,12 @@ public class ProfilePatternElement implements Serializable {
 
 	@Column(name = "item")
 	private short item;
+	
+	@Column(name="ver")
+	private short version;	
+	
+	@Column(name="status")
+	private short status;
 
 	//bi-directional many-to-one association to Catalog
 	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
@@ -55,6 +61,15 @@ public class ProfilePatternElement implements Serializable {
 	@OneToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
+	
+	// history tree
+	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinColumn(name="ancestor", referencedColumnName="id")
+	private ProfilePatternElement ancestorProfilePatternElement;
+
+	@OneToMany(mappedBy="ancestorProfilePatternElement", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OrderBy(value="version")
+	private List<ProfilePatternElement> historyProfilePatternElements;
 	
 	public ProfilePatternElement() { }
 
@@ -106,6 +121,22 @@ public class ProfilePatternElement implements Serializable {
 	public void setMinLevel_id(Level minLevel) {
 		this.minLevel = minLevel;
 	}
+	
+	public short getVersion() {
+		return this.version;
+	}
+
+	public void setVersion(short ver) {
+		this.version = ver;
+	}
+	
+	public short getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(short status) {
+		this.status = status;
+	}
 
 	public ProfilePattern getProfilePattern() {
 		return this.profilePattern;
@@ -134,6 +165,18 @@ public class ProfilePatternElement implements Serializable {
 		stringAttrs.remove( stringAttr );		
 		return stringAttr;
 	}	
+	
+	public ProfilePatternElement getAncestorProfilePatternElement() {
+		return this.ancestorProfilePatternElement;
+	}
+
+	public void setAncestorProfilePatternElement(ProfilePatternElement ancestorProfilePatternElement) {
+		this.ancestorProfilePatternElement = ancestorProfilePatternElement;
+	}
+
+	public List<ProfilePatternElement> getHistoryProfilePatternElements() {
+		return this.historyProfilePatternElements;
+	}
 	
 	@Override
 	public int hashCode() {

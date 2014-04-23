@@ -60,6 +60,10 @@ public class Division implements Serializable {
 	@OrderBy(value="name")
 	private List<Division> subDivisions;
 
+	@OneToMany(mappedBy="division", fetch=FetchType.LAZY)
+	@OrderBy(value="kpers")
+	private List<EstablishedPost> establishedPosts;
+
 	public Division() { }
 
 	public int getId() {
@@ -96,6 +100,10 @@ public class Division implements Serializable {
 
 	public List<Division> getSubDivision() {
 		return this.subDivisions;
+	}
+	
+	public List<EstablishedPost> getEstablishedPosts() {
+		return establishedPosts;
 	}
 
 	@Override

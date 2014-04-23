@@ -46,6 +46,10 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
 	@OrderBy(value="item")
 	private List<Competence> competences;
 
+	@OneToMany(mappedBy="catalog", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OrderBy(value="item")
+	private List<ProfilePattern> profilePatterns;
+
     // catalog's tree
     @ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name="parent", referencedColumnName="id")    
@@ -83,6 +87,23 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
    		this.subCatalogs = subCatalogs;
    		this.ancestorCatalog = ancestorCatalog;   		
    		this.competences = competences;
+   		this.profilePatterns = null;
+   		this.journal = journal;
+   	}   	
+
+   	public Catalog(String name, short item, short status, short variety, short version,
+   			Catalog parentCatalog, List<Catalog> subCatalogs, Catalog ancestorCatalog,
+   			Journal journal, List<ProfilePattern> profilePatterns) { 
+   		this.name = name;
+   		this.item = item;
+   		this.status = status;
+   		this.variety = variety;
+   		this.version = version;
+   		this.parentCatalog = parentCatalog;
+   		this.subCatalogs = subCatalogs;
+   		this.ancestorCatalog = ancestorCatalog;   		
+   		this.profilePatterns = profilePatterns;
+   		this.competences = null;
    		this.journal = journal;
    	}   	
 
@@ -194,6 +215,27 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
 		if( (competences == null) || (competence == null) ) return competence;
 		if(competences.remove(competence)) competence.setCatalog(null);
 		return competence;
+	}
+
+	public List<ProfilePattern> getProfilePatterns() {
+		return profilePatterns;
+	}
+
+	public void setProfilePatterns( List<ProfilePattern> profilePatterns ) {
+		this.profilePatterns = profilePatterns;
+	}
+	
+	public ProfilePattern addProfilePattern( ProfilePattern profilePattern ) {
+		if ( profilePatterns == null ) profilePatterns = new ArrayList<ProfilePattern>();
+		profilePatterns.add( profilePattern );
+		profilePattern.setCatalog( this );
+		return profilePattern;
+	}
+
+	public ProfilePattern removeProfilePattern( ProfilePattern profilePattern ) {
+		if ( ( profilePatterns == null ) || ( profilePattern == null ) ) return profilePattern;
+		if ( profilePatterns.remove( profilePattern ) ) profilePattern.setCatalog( null );
+		return profilePattern;
 	}
 
 	public Journal getJournal() {
