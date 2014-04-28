@@ -8,6 +8,7 @@ import org.apache.openjpa.persistence.ReadOnly;
 import org.apache.openjpa.persistence.UpdateAction;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 
 /**
@@ -56,12 +57,21 @@ public class Person implements Serializable {
 	
 	@ReadOnly(value=UpdateAction.IGNORE)
 	@Column(name="STAT2")
-	private int stat2;
+	private int status;
 	
 	@ReadOnly(value=UpdateAction.IGNORE)
 	@Column(name="Tab")
 	private String tab;
+	
+	@OneToMany(mappedBy="person", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OrderBy(value="item")
+	private List<PersonPostRelation> personPostRelations;
 
+	public static final int STATUS_DISMISS		= 0;
+	public static final int STATUS_SUSPEND		= 1;
+	public static final int STATUS_PENSIONER	= 2;
+	public static final int STATUS_ACTIVE		= 3;
+	
 	public Person() { }
 
 	public int getId() {
@@ -96,12 +106,16 @@ public class Person implements Serializable {
 		return this.sex;
 	}
 
-	public int getStat2() {
-		return this.stat2;
+	public int getStatus() {
+		return this.status;
 	}
 
 	public String getTab() {
 		return this.tab;
+	}
+
+	public List<PersonPostRelation> getPersonPostRelations() {
+		return this.personPostRelations;
 	}
 
 	/*

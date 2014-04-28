@@ -52,7 +52,7 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
 
     // catalog's tree
     @ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name="parent", referencedColumnName="id")    
+    @JoinColumn(name="parent_id", referencedColumnName="id")    
 	private Catalog parentCatalog; 
 
 	@OneToMany(mappedBy="parentCatalog", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
@@ -61,12 +61,12 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
 
 	// history tree
 	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name="ancestor", referencedColumnName="id")
-	private Catalog ancestorCatalog;
+	@JoinColumn(name="ancestor_id", referencedColumnName="id")
+	private Catalog ancestor;
 
-	@OneToMany(mappedBy="ancestorCatalog", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToMany(mappedBy="ancestor", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="version")
-	private List<Catalog> historyCatalogs;
+	private List<Catalog> historyList;
 
 	//uni-directional many-to-one association to Journal
 	@OneToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
@@ -76,7 +76,7 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
 	public Catalog() { }
 
    	public Catalog(String name, short item, short status, short variety, short version,
-   			Catalog parentCatalog, List<Catalog> subCatalogs, Catalog ancestorCatalog,
+   			Catalog parentCatalog, List<Catalog> subCatalogs, Catalog ancestor,
    			List<Competence> competences, Journal journal) { 
    		this.name = name;
    		this.item = item;
@@ -85,14 +85,15 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
    		this.version = version;
    		this.parentCatalog = parentCatalog;
    		this.subCatalogs = subCatalogs;
-   		this.ancestorCatalog = ancestorCatalog;   		
+   		this.ancestor = ancestor;   		
    		this.competences = competences;
    		this.profilePatterns = null;
    		this.journal = journal;
+   		this.historyList = null;
    	}   	
 
    	public Catalog(String name, short item, short status, short variety, short version,
-   			Catalog parentCatalog, List<Catalog> subCatalogs, Catalog ancestorCatalog,
+   			Catalog parentCatalog, List<Catalog> subCatalogs, Catalog ancestor,
    			Journal journal, List<ProfilePattern> profilePatterns) { 
    		this.name = name;
    		this.item = item;
@@ -101,7 +102,7 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
    		this.version = version;
    		this.parentCatalog = parentCatalog;
    		this.subCatalogs = subCatalogs;
-   		this.ancestorCatalog = ancestorCatalog;   		
+   		this.ancestor = ancestor;   		
    		this.profilePatterns = profilePatterns;
    		this.competences = null;
    		this.journal = journal;
@@ -184,16 +185,16 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
 		return catalog;
 	}
 	
-	public Catalog getAncestorCatalog() {
-		return this.ancestorCatalog;
+	public Catalog getAncestor() {
+		return this.ancestor;
 	}
 
-	public void setAncestorCatalog(Catalog ancestorCatalog) {
-		this.ancestorCatalog = ancestorCatalog;
+	public void setAncestor( Catalog ancestor ) {
+		this.ancestor = ancestor;
 	}
 
-	public List<Catalog> getHistoryCatalogs() {
-		return this.historyCatalogs;
+	public List<Catalog> getHistoryList() {
+		return this.historyList;
 	}
 
 	public List<Competence> getCompetences() {
@@ -205,6 +206,7 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
 	}
 	
 	public Competence addCompetence(Competence competence) {
+		if ( competence == null ) return null;
 		if(competences == null) this.competences = new ArrayList<Competence>();
 		this.competences.add(competence);
 		competence.setCatalog(this);

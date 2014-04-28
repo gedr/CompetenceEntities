@@ -18,13 +18,13 @@ import java.util.List;
 public class Indicator implements Serializable, StatusConst {
 	private static final long serialVersionUID = 1L;
 
-    @TableGenerator(name="Indicator_Gen", table="GenI", schema="Minos",
+    @TableGenerator(name="Indicator_Gen", table="GenL", schema="Minos",
     		pkColumnName="TableName", valueColumnName="KeyValue",
     		pkColumnValue="INDICATOR_GEN", allocationSize=1)
     @Id
-    @Column(name = "id")
+    @Column(name="id")
     @GeneratedValue(strategy=GenerationType.TABLE, generator="Indicator_Gen") 
-    private int id;    
+    private long id;    
 
 	@Column(name="item")
 	private short item;
@@ -45,14 +45,14 @@ public class Indicator implements Serializable, StatusConst {
 
 	//bi-directional many-to-one association to Indicator
 	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name="ancestor", referencedColumnName="id")
-	private Indicator ancestorIndicator;
+	@JoinColumn(name="ancestor_id", referencedColumnName="id")
+	private Indicator ancestor;
 
 	//bi-directional many-to-one association to Indicator
-	@OneToMany(mappedBy="ancestorIndicator", fetch=FetchType.LAZY, 
+	@OneToMany(mappedBy="ancestor", fetch=FetchType.LAZY, 
 			cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="version")
-	private List<Indicator> historyIndicators;
+	private List<Indicator> historyList;
 
 	//uni-directional many-to-one association to Level
 	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
@@ -66,23 +66,24 @@ public class Indicator implements Serializable, StatusConst {
 
 	public Indicator() { }
 	
-	public Indicator(String name, short item, short status, short version, 
-			Competence competence, Level level, Indicator ancestorIndicator, Journal journal) {
+	public Indicator( String name, short item, short status, short version, 
+			Competence competence, Level level, Indicator ancestor, Journal journal ) {
 		this.name = name;
 		this.item = item;
 		this.status = status;
 		this.version = version;
 		this.competence = competence;		
 		this.level = level;
-		this.ancestorIndicator = ancestorIndicator;		
+		this.ancestor = ancestor;		
 		this.journal = journal;
+		this.historyList = null;
 	}
 
-	public int getId() {
+	public long getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId( long id ) {
 		this.id = id;
 	}
 
@@ -90,7 +91,7 @@ public class Indicator implements Serializable, StatusConst {
 		return this.item;
 	}
 
-	public void setItem(short item) {
+	public void setItem( short item ) {
 		this.item = item;
 	}
 
@@ -98,7 +99,7 @@ public class Indicator implements Serializable, StatusConst {
 		return this.name;
 	}
 
-	public void setName(String name) {
+	public void setName( String name ) {
 		this.name = name;
 	}
 
@@ -106,7 +107,7 @@ public class Indicator implements Serializable, StatusConst {
 		return this.status;
 	}
 
-	public void setStatus(short status) {
+	public void setStatus( short status ) {
 		this.status = status;
 	}
 
@@ -114,7 +115,7 @@ public class Indicator implements Serializable, StatusConst {
 		return this.version;
 	}
 
-	public void setVersion(short ver) {
+	public void setVersion( short ver ) {
 		this.version = ver;
 	}
 
@@ -122,27 +123,27 @@ public class Indicator implements Serializable, StatusConst {
 		return this.competence;
 	}
 
-	public void setCompetence(Competence competence) {
+	public void setCompetence( Competence competence ) {
 		this.competence = competence;
 	}
 
-	public Indicator getAncestorIndicator() {
-		return this.ancestorIndicator;
+	public Indicator getAncestor() {
+		return this.ancestor;
 	}
 
-	public void setAncestorIndicator(Indicator ancestorIndicator) {
-		this.ancestorIndicator = ancestorIndicator;
+	public void setAncestor( Indicator ancestor ) {
+		this.ancestor = ancestor;
 	}
 
-	public List<Indicator> getHistoryIndicators() {
-		return this.historyIndicators;
+	public List<Indicator> getHistoryList() {
+		return this.historyList;
 	}
 
 	public Level getLevel() {
 		return this.level;
 	}
 
-	public void setLevel(Level level) {
+	public void setLevel( Level level ) {
 		this.level = level;
 	}
 
@@ -150,26 +151,26 @@ public class Indicator implements Serializable, StatusConst {
 		return this.journal;
 	}
 
-	public void setJournal(Journal journal) {
+	public void setJournal( Journal journal ) {
 		this.journal = journal;
 	}
 
 	@Override
 	public int hashCode() {
-		return id;
+		return Long.valueOf( id ).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if(this == obj) return true;
-		if(obj == null) return false;
-		if (!(obj instanceof Indicator)) return false;
-		if(this.id != ((Indicator) obj).id) return false;
+		if ( this == obj ) return true;
+		if ( obj == null ) return false;
+		if (!( obj instanceof Indicator ) ) return false;
+		if ( this.id != ( ( Indicator ) obj ).id ) return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Indicator: [" + String.valueOf(id) + "] " + name;
+		return "Indicator: [" + String.valueOf( id ) + "] " + name;
 	}
 }

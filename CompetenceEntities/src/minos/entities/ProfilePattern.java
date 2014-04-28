@@ -71,17 +71,17 @@ public class ProfilePattern implements Serializable, StatusConst {
 	
 	// history tree
 	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name="ancestor", referencedColumnName="id")
-	private ProfilePattern ancestorProfilePattern;
+	@JoinColumn(name="ancestor_id", referencedColumnName="id")
+	private ProfilePattern ancestor;
 
-	@OneToMany(mappedBy="ancestorProfilePattern", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToMany(mappedBy="ancestor", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="version")
-	private List<ProfilePattern> historyProfilePatterns;
+	private List<ProfilePattern> historyList;
 		
 	public ProfilePattern() { }
 	
-	public ProfilePattern(String name, String descr, long filialMask, int item, 
-			short postMask, short status, Timestamp timePoint, Catalog catalog) {
+	public ProfilePattern( String name, String descr, long filialMask, int item, short postMask, 
+			short status, Timestamp timePoint, Catalog catalog, ProfilePattern ancestor ) {
 		this.name = name;
 		this.description = descr;
 		this.filialMask = filialMask;
@@ -90,13 +90,15 @@ public class ProfilePattern implements Serializable, StatusConst {
 		this.status = status;
 		this.timePoint = timePoint;		
 		this.catalog = catalog;
+		this.ancestor = ancestor;
+		this.historyList = null;
 	}
 	
 	public int getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId( int id ) {
 		this.id = id;
 	}
 
@@ -104,7 +106,7 @@ public class ProfilePattern implements Serializable, StatusConst {
 		return this.name;
 	}
 
-	public void setName(String name) {
+	public void setName( String name ) {
 		this.name = name;
 	}
 	
@@ -112,7 +114,7 @@ public class ProfilePattern implements Serializable, StatusConst {
 		return this.description;
 	}
 
-	public void setDescription(String descr) {
+	public void setDescription( String descr ) {
 		this.description = descr;
 	}
 
@@ -120,7 +122,7 @@ public class ProfilePattern implements Serializable, StatusConst {
 		return this.filialMask;
 	}
 
-	public void setFilialMask(long filialMask) {
+	public void setFilialMask( long filialMask ) {
 		this.filialMask = filialMask;
 	}
 
@@ -128,7 +130,7 @@ public class ProfilePattern implements Serializable, StatusConst {
 		return this.item;
 	}
 
-	public void setItem(int item) {
+	public void setItem( int item ) {
 		this.item = item;
 	}
 
@@ -136,7 +138,7 @@ public class ProfilePattern implements Serializable, StatusConst {
 		return this.journal;
 	}
 
-	public void setJournal(Journal journal) {
+	public void setJournal( Journal journal ) {
 		this.journal = journal;
 	}
 
@@ -144,7 +146,7 @@ public class ProfilePattern implements Serializable, StatusConst {
 		return this.postMask;
 	}
 
-	public void setPostMask(short postMask) {
+	public void setPostMask( short postMask ) {
 		this.postMask = postMask;
 	}
 
@@ -152,7 +154,7 @@ public class ProfilePattern implements Serializable, StatusConst {
 		return this.status;
 	}
 
-	public void setStatus(short status) {
+	public void setStatus( short status ) {
 		this.status = status;
 	}
 
@@ -160,7 +162,7 @@ public class ProfilePattern implements Serializable, StatusConst {
 		return this.timePoint;
 	}
 
-	public void setTimePoint(Timestamp timePoint) {
+	public void setTimePoint( Timestamp timePoint ) {
 		this.timePoint = timePoint;
 	}
 	
@@ -168,7 +170,7 @@ public class ProfilePattern implements Serializable, StatusConst {
 		return this.catalog;
 	}
 
-	public void setCatalog(Catalog catalog) {
+	public void setCatalog( Catalog catalog ) {
 		this.catalog = catalog;
 	}
 	
@@ -176,7 +178,7 @@ public class ProfilePattern implements Serializable, StatusConst {
 		return this.version;
 	}
 
-	public void setVersion(short ver) {
+	public void setVersion( short ver ) {
 		this.version = ver;
 	}
 
@@ -188,29 +190,29 @@ public class ProfilePattern implements Serializable, StatusConst {
 		this.profilePatternElements = profilePatternElements;
 	}
 	
-	public ProfilePatternElement addIndicator(ProfilePatternElement element) {
+	public ProfilePatternElement addProfilePatternElement( ProfilePatternElement element ) {
 		if ( profilePatternElements == null ) profilePatternElements = new ArrayList<>();			
 		profilePatternElements.add( element );
 		element.setProfilePattern( this );
 		return element;
 	}
 
-	public ProfilePatternElement removeIndicator(ProfilePatternElement element) {
+	public ProfilePatternElement removeProfilePatternElement( ProfilePatternElement element ) {
 		if ( ( profilePatternElements == null ) || ( element == null ) ) return element;		
-		if ( profilePatternElements.remove( element )) element.setProfilePattern( null );
+		if ( profilePatternElements.remove( element ) ) element.setProfilePattern( null );
 		return element;
 	}
 	
-	public ProfilePattern getAncestorProfilePattern() {
-		return this.ancestorProfilePattern;
+	public ProfilePattern getAncestor() {
+		return this.ancestor;
 	}
 
-	public void setAncestorProfilePattern(ProfilePattern ancestorProfilePattern) {
-		this.ancestorProfilePattern = ancestorProfilePattern;
+	public void setAncestor( ProfilePattern ancestor ) {
+		this.ancestor = ancestor;
 	}
 
-	public List<ProfilePattern> getHistoryProfilePatterns() {
-		return this.historyProfilePatterns;
+	public List<ProfilePattern> getHistoryList() {
+		return this.historyList;
 	}
 	
 	@Override

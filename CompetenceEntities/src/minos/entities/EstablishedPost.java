@@ -8,6 +8,8 @@ import org.apache.openjpa.persistence.ReadOnly;
 import org.apache.openjpa.persistence.UpdateAction;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -81,6 +83,14 @@ public class EstablishedPost implements Serializable {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="tStatBDolSPId", referencedColumnName="tStatBDolSPId")
 	private BasisPost basisPost;
+	
+	@OneToMany(mappedBy="epost", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OrderBy(value="item")
+	private List<PersonPostRelation> personPostRelations;
+
+	@OneToMany(mappedBy="establishedPost", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})	
+	private List<Profile> profiles;
+
 
 	public EstablishedPost() { }
 
@@ -143,6 +153,33 @@ public class EstablishedPost implements Serializable {
 	public BasisPost getBasisPost() {
 		return this.basisPost;
 	}
+	
+	public List<PersonPostRelation> getPersonPostRelations() {
+		return this.personPostRelations;
+	}
+	
+	public List<Profile> getProfiles() {
+		return this.profiles;
+	}
+
+	public void setProfiles( List<Profile> profiles ) {
+		this.profiles = profiles;
+	}
+	
+	public Profile addProfile( Profile profile ) {
+		if ( profile == null ) return profile;
+		if ( profiles == null ) profiles = new ArrayList<Profile>();
+		profiles.add( profile );
+		profile.setEstablishedPost( this );
+		return profile;
+	}
+
+	public Profile removeProfile( Profile profile ) {
+		if ( ( profiles == null ) || ( profile == null ) ) return profile;
+		if ( profiles.remove( profile ) ) profile.setEstablishedPost( null );
+		return profile;
+	}
+
 
 	@Override
 	public int hashCode() {

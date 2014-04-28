@@ -50,13 +50,6 @@ public class ProfilePatternElement implements Serializable {
 	@JoinColumn(name="profilePattern_id", referencedColumnName="id")
 	private ProfilePattern profilePattern;	
 
-	//bi-directional many-to-one association to StringAttr
-	@ManyToMany(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinTable(name = "Minos.PPE_SA", 
-	joinColumns = @JoinColumn(name = "ppe_id", referencedColumnName="id"), 
-	inverseJoinColumns = @JoinColumn(name = "stringAttr_id", referencedColumnName="id"))
-	private List<StringAttr> stringAttrs;
-	
 	//uni-directional many-to-one association to Journal
 	@OneToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="journal_id", referencedColumnName="id")
@@ -64,22 +57,28 @@ public class ProfilePatternElement implements Serializable {
 	
 	// history tree
 	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name="ancestor", referencedColumnName="id")
-	private ProfilePatternElement ancestorProfilePatternElement;
+	@JoinColumn(name="ancestor_id", referencedColumnName="id")
+	private ProfilePatternElement ancestor;
 
-	@OneToMany(mappedBy="ancestorProfilePatternElement", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToMany(mappedBy="ancestor", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="version")
-	private List<ProfilePatternElement> historyProfilePatternElements;
-	
+	private List<ProfilePatternElement> historyList;
+
+	@OneToMany(mappedBy="ppe", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OrderBy(value="item")
+	private List<PpeStrAtr> attributes;
+
 	public ProfilePatternElement() { }
 
 	public ProfilePatternElement(short item, Competence competence, Level minLevel,
-			ProfilePattern profilePattern, Journal journal) {  
+			ProfilePattern profilePattern, Journal journal, ProfilePatternElement ancestor) {  
 		this.item = item;
 		this.competence = competence;
 		this.minLevel = minLevel;
 		this.profilePattern = profilePattern;
 		this.journal = journal;
+		this.ancestor = ancestor;
+		this.historyList = null;
 	}
 
 	public int getId() {
@@ -145,37 +144,38 @@ public class ProfilePatternElement implements Serializable {
 	public void setProfilePattern(ProfilePattern profilePattern) {
 		this.profilePattern = profilePattern;
 	}
-	
-	public List<StringAttr> getStringAttrs() {
-		return this.stringAttrs;
+		
+	public ProfilePatternElement getAncestor() {
+		return this.ancestor;
 	}
 
-	public void setStringAttrs(List<StringAttr> stringAttrs) {
-		this.stringAttrs = stringAttrs;
-	}
-	
-	public StringAttr addStringAttrs(StringAttr stringAttr) {
-		if ( stringAttrs == null ) this.stringAttrs = new ArrayList<StringAttr>();
-		stringAttrs.add( stringAttr );
-		return stringAttr;
+	public void setAncestor( ProfilePatternElement ancestorProfilePatternElement ) {
+		this.ancestor = ancestorProfilePatternElement;
 	}
 
-	public StringAttr removeStringAttrs(StringAttr stringAttr) {
-		if ( ( stringAttrs == null ) || ( stringAttr == null ) ) return stringAttr;
-		stringAttrs.remove( stringAttr );		
-		return stringAttr;
-	}	
-	
-	public ProfilePatternElement getAncestorProfilePatternElement() {
-		return this.ancestorProfilePatternElement;
+	public List<PpeStrAtr> getAttributes() {
+		return this.attributes;
 	}
 
-	public void setAncestorProfilePatternElement(ProfilePatternElement ancestorProfilePatternElement) {
-		this.ancestorProfilePatternElement = ancestorProfilePatternElement;
+	public void setAttributes( List<PpeStrAtr> attrs ) {
+		this.attributes = attrs;
 	}
 
-	public List<ProfilePatternElement> getHistoryProfilePatternElements() {
-		return this.historyProfilePatternElements;
+	public PpeStrAtr addAttributes( PpeStrAtr attrs ) {
+		if ( attributes == null) attributes = new ArrayList<PpeStrAtr>();
+		attributes.add( attrs);
+		attrs.setProfilePatternElement( this );
+		return attrs;
+	}
+
+	public PpeStrAtr removeAttributes( PpeStrAtr attrs ) {
+		if ( ( attributes == null ) || ( attrs == null ) ) return attrs;
+		if ( attributes.remove( attrs ) ) attrs.setProfilePatternElement(  null );
+		return attrs;
+	}
+
+	public List<ProfilePatternElement> getHistoryList() {
+		return this.historyList;
 	}
 	
 	@Override
@@ -185,14 +185,14 @@ public class ProfilePatternElement implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(this == obj) return true;
-		if(obj == null) return false;
-		if (!(obj instanceof ProfilePatternElement)) return false;
-		if(this.id != ((ProfilePatternElement) obj).id) return false;
+		if ( this == obj ) return true;
+		if ( obj == null ) return false;
+		if ( !( obj instanceof ProfilePatternElement ) ) return false;
+		if ( this.id != ( ( ProfilePatternElement ) obj ).id ) return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "ProfilePatternElement: [" + String.valueOf(id) + "] ";
+		return "ProfilePatternElement: [" + String.valueOf( id ) + "] ";
 	}}

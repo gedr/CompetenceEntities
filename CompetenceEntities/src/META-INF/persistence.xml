@@ -15,6 +15,14 @@
 		<class>minos.entities.StringAttr</class>
 		<class>minos.entities.EstablishedPost</class>
 		<class>minos.entities.BasisPost</class>
+		<class>minos.entities.PpeStrAtr</class>
+		<class>minos.entities.PersonPostRelation</class>
+		<class>minos.entities.Profile</class>
+		<class>minos.entities.Actors</class>
+		<class>minos.entities.ActorsInfo</class>
+		<class>minos.entities.ActorsPerformance</class>
+		<class>minos.entities.Alien</class>
+		<class>minos.entities.Measure</class>
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://192.168.56.2:1433;databaseName=gedr"/>
 			<property name="javax.persistence.jdbc.user" value="sa"/>

@@ -53,14 +53,14 @@ public class Competence implements Serializable, VarietyConst, StatusConst {
 
 	//bi-directional many-to-one association to Competence
 	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name="ancestor", referencedColumnName="id")
-	private Competence ancestorCompetence;
+	@JoinColumn(name="ancestor_id", referencedColumnName="id")
+	private Competence ancestor;
 
 	//bi-directional many-to-one association to Competence
-	@OneToMany(mappedBy="ancestorCompetence", fetch=FetchType.LAZY, 
+	@OneToMany(mappedBy="ancestor", fetch=FetchType.LAZY, 
 			cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="version")
-	private List<Competence> historyCompetences;
+	private List<Competence> historyList;
 	
 	//bi-directional many-to-one association to MinosIndicator
 	@OneToMany(mappedBy="competence", fetch=FetchType.LAZY, 
@@ -75,8 +75,9 @@ public class Competence implements Serializable, VarietyConst, StatusConst {
 
 	public Competence() { }
 	
-	public Competence(String name, String descr, short item, short status, short variety, short version, 
-			Catalog catalog, Competence ancestorCompetence, List<Indicator> indicators, Journal journal) {
+	public Competence(String name, String descr, short item, short status, short variety, 
+			short version, Catalog catalog, Competence ancestor, 
+			List<Indicator> indicators, Journal journal) {
 		this.name = name;
 		this.description = descr;
 		this.item = item;
@@ -84,9 +85,10 @@ public class Competence implements Serializable, VarietyConst, StatusConst {
 		this.variety = variety;
 		this.version = version;
 		this.catalog = catalog;
-		this.ancestorCompetence = ancestorCompetence;
+		this.ancestor = ancestor;
 		this.indicators = indicators;
 		this.journal = journal;
+		this.historyList = null;
 	}
 
 	public int getId() {
@@ -153,16 +155,16 @@ public class Competence implements Serializable, VarietyConst, StatusConst {
 		this.catalog = catalog;
 	}
 
-	public Competence getAncestorCompetence() {
-		return this.ancestorCompetence;
+	public Competence getAncestor() {
+		return this.ancestor;
 	}
 
-	public void setAncestorCompetence(Competence ancestorCompetence) {
-		this.ancestorCompetence = ancestorCompetence;
+	public void setAncestorCompetence(Competence ancestor) {
+		this.ancestor = ancestor;
 	}
 
-	public List<Competence> getHistoryCompetences() {
-		return this.historyCompetences;
+	public List<Competence> getHistoryList() {
+		return this.historyList;
 	}
 
 	public List<Indicator> getIndicators() {
