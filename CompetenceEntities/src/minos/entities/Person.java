@@ -117,6 +117,23 @@ public class Person implements Serializable {
 	public List<PersonPostRelation> getPersonPostRelations() {
 		return this.personPostRelations;
 	}
+	
+	public String getFullName() {
+		StringBuilder sb = new StringBuilder();
+		sb.append( surname == null ? " " : surname ).append( " " ).
+		append( name == null ? " " : name ).append( " " ).
+		append( patronymic == null ? " " : patronymic ).append( " " );
+		return sb.toString();		
+	}
+	
+	public String getSurnameAndInitials(boolean initialsAsFirst, boolean closelyPacket) {
+		StringBuilder sb = new StringBuilder();
+		if ( !initialsAsFirst ) sb.append( surname == null ? "" : surname ).append( closelyPacket ? "" : " " );
+		sb.append( name == null ? "" : String.valueOf( name.charAt( 0 ) ) ).append( closelyPacket ? "" : "." );
+		sb.append( patronymic == null ? "" : String.valueOf( patronymic.charAt( 0 ) ) ).append( closelyPacket ? "" : "." );
+		if ( initialsAsFirst ) sb.append( closelyPacket ? "" : " " ).append( surname == null ? "" : surname );		
+		return sb.toString();		
+	}
 
 	/*
 	public PersonLogin getPersonLogin() {

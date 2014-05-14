@@ -24,11 +24,15 @@ public class ActorsPerformance implements Serializable {
     @GeneratedValue(strategy=GenerationType.TABLE, generator="ActorsPerf_Gen") 
     private long id;    
 
+    @Basic(fetch=FetchType.LAZY)
     @Column(name="attr", length=1000000)
 	private String attributes;
 
 	@Column(name="cost")
 	private double cost;
+	
+	@Column(name="cVer")
+	private short competenceVersion;
 
 	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="ppe_id", referencedColumnName="id")    
@@ -41,11 +45,12 @@ public class ActorsPerformance implements Serializable {
 
 	public ActorsPerformance() { }
 	
-	public ActorsPerformance( String attr, double cost, ProfilePatternElement ppe, Actors actors ) {
+	public ActorsPerformance( String attr, double cost, ProfilePatternElement ppe, short competenceVersion, Actors actors ) {
 		this.attributes = attr;
 		this.cost = cost;
 		this.profilePatternElement = ppe;
-		this.actors = actors;		
+		this.actors = actors;
+		this.competenceVersion = competenceVersion;
 	}
 
 	public long getId() {
@@ -86,6 +91,14 @@ public class ActorsPerformance implements Serializable {
 
 	public void setActor( Actors actor ) {
 		this.actors = actor;
+	}
+	
+	public short getCompetenceVersion() {
+		return competenceVersion;
+	}
+
+	public void setCompetenceVersion(short ver) {
+		this.competenceVersion = ver;
 	}
 
 	@Override

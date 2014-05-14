@@ -19,7 +19,7 @@ import java.util.List;
 @Entity
 @Table(name="Actors", schema="Minos")
 @NamedQuery(name="Actors.findAll", query="SELECT a FROM Actors a")
-public class Actors implements Serializable {
+public class Actors implements Serializable, StatusConst {
 	private static final long serialVersionUID = 1L;
 
     @TableGenerator(name="Actors_Gen", table="GenL", schema="Minos", 
@@ -53,7 +53,10 @@ public class Actors implements Serializable {
 	
 	@Column(name="finish")
 	private Timestamp finish;
-	
+
+	@Column(name="assembly")
+	private Timestamp assembly;
+
 	@Column(name="status")
 	private short status;
 
@@ -61,10 +64,6 @@ public class Actors implements Serializable {
 	@JoinColumn(name="measure_id", referencedColumnName="id")	
 	private Measure measure;
 	
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name="epost_id", referencedColumnName="tOrgStatDolId")
-	private EstablishedPost establishedPost;
-
 	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="profile_id", referencedColumnName="id")	
 	private Profile profile;
@@ -95,8 +94,8 @@ public class Actors implements Serializable {
 						( val.getVariety() == flag ) ) ); 
 	}
 	
-	private Actors( short gauge, Timestamp finish, short status, Measure measure, EstablishedPost epost,
-			Profile profile, Journal journal, ActorsInfo testMode, ActorsInfo reserveLevel, ActorsInfo reserveType, 
+	private Actors( short gauge, Timestamp finish, short status, Measure measure, Profile profile, 
+			Journal journal, ActorsInfo testMode, ActorsInfo reserveLevel, ActorsInfo reserveType, 
 			List<ActorsPerformance> lap ) {
 		if ( ( finish == null ) || ( measure == null ) || 
 				( journal == null ) ) throw new NullArgumentException( "Actors.Actors() have null argument" );
@@ -107,7 +106,6 @@ public class Actors implements Serializable {
 		this.finish = finish;
 		this.status = status;
 		this.measure = measure;
-		this.establishedPost = epost;
 		this.profile = profile;
 		this.journal = journal;
 		this.testMode = testMode;
@@ -116,14 +114,15 @@ public class Actors implements Serializable {
 		this.actorsPerformances = lap;		
 	}
 
-	public static final short SINNER_TYPE_INNER = 1;
-	public static final short SINNER_TYPE_ALIEN = 2;
+	public static final short SINNER_TYPE_UNKNOWN	= 0;
+	public static final short SINNER_TYPE_INNER 	= 1;
+	public static final short SINNER_TYPE_ALIEN 	= 2;
 
 	public Actors() { }
 	
-	public Actors( Person minos, Person sinner, short gauge, Timestamp finish, short status, Measure measure, EstablishedPost epost,
-			Profile profile, Journal journal, ActorsInfo testMode, ActorsInfo reserveLevel, ActorsInfo reserveType, List<ActorsPerformance> lap ) {
-		this(gauge, finish, status, measure, epost, profile, journal, testMode, reserveLevel, reserveType, lap);
+	public Actors( Person minos, Person sinner, short gauge, Timestamp finish, short status, Measure measure, Profile profile, 
+			Journal journal, ActorsInfo testMode, ActorsInfo reserveLevel, ActorsInfo reserveType, List<ActorsPerformance> lap ) {
+		this(gauge, finish, status, measure, profile, journal, testMode, reserveLevel, reserveType, lap);
 		this.minos = minos;
 		this.internalSinner = sinner;
 		this.alienSinnerVersion = 0;
@@ -131,9 +130,9 @@ public class Actors implements Serializable {
 		this.sinnerType = SINNER_TYPE_INNER;
 	}
 
-	public Actors( Person minos, Alien sinner, short sinnerVer, short gauge, Timestamp finish, short status, Measure measure, EstablishedPost epost,
-			Profile profile, Journal journal, ActorsInfo testMode, ActorsInfo reserveLevel, ActorsInfo reserveType, List<ActorsPerformance> lap ) {
-		this(gauge, finish, status, measure, epost, profile, journal, testMode, reserveLevel, reserveType, lap);
+	public Actors( Person minos, Alien sinner, short sinnerVer, short gauge, Timestamp finish, short status, Measure measure, Profile profile, 
+			Journal journal, ActorsInfo testMode, ActorsInfo reserveLevel, ActorsInfo reserveType, List<ActorsPerformance> lap ) {
+		this(gauge, finish, status, measure, profile, journal, testMode, reserveLevel, reserveType, lap);
 		this.minos = minos;
 		this.internalSinner = null;
 		this.alienSinnerVersion = sinnerVer;
@@ -221,14 +220,14 @@ public class Actors implements Serializable {
 		this.finish = finish;
 	}
 
-	public EstablishedPost getEstablishedPost() {
-		return establishedPost;
+	public Timestamp getAssembly() {
+		return this.assembly;
 	}
 
-	public void setEstablishedPost( EstablishedPost establishedPost ) {
-		this.establishedPost = establishedPost;
+	public void setAssembly( Timestamp assembly ) {
+		this.assembly = assembly;
 	}
-
+	
 	public Profile getProfile() {
 		return profile;
 	}
