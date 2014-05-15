@@ -31,7 +31,7 @@ public class ActorsPerformance implements Serializable {
 	@Column(name="cost")
 	private double cost;
 	
-	@Column(name="cVer")
+	@Column(name="cver")
 	private short competenceVersion;
 
 	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
