@@ -32,24 +32,22 @@ public class ProfilePattern implements Serializable, StatusConst {
 	private String name;
 
 	@Basic(fetch=FetchType.LAZY)
-	@Column(name="descr", length=8000)
+	@Column(name="descr", length=8_000)
 	private String description;
 
+	@Basic(fetch=FetchType.LAZY)
+	@Column(name="summary", length=1_000_000)
+	private String summary;
+
 	@Column(name="filialMask")
-	private long filialMask;
+	private byte[] filialMask;
 
 	@Column(name="item")
 	private int item;
 
-	@Column(name="postMask")
-	private short postMask;
-
 	@Column(name="status")
 	private short status;
 	
-	@Column(name="ver")
-	private short version;	
-
 	@Column(name="timePoint")
 	private Timestamp timePoint;
 	
@@ -69,29 +67,18 @@ public class ProfilePattern implements Serializable, StatusConst {
 	@OrderBy(value="item")
 	private List<ProfilePatternElement> profilePatternElements;
 	
-	// history tree
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name="ancestor_id", referencedColumnName="id")
-	private ProfilePattern ancestor;
-
-	@OneToMany(mappedBy="ancestor", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@OrderBy(value="version")
-	private List<ProfilePattern> historyList;
-		
+	
 	public ProfilePattern() { }
 	
-	public ProfilePattern( String name, String descr, long filialMask, int item, short postMask, 
-			short status, Timestamp timePoint, Catalog catalog, ProfilePattern ancestor ) {
+	public ProfilePattern( String name, String descr, byte[] filialMask, int item, short status, 
+			Timestamp timePoint, Catalog catalog ) {
 		this.name = name;
 		this.description = descr;
 		this.filialMask = filialMask;
 		this.item = item;
-		this.postMask = postMask;
 		this.status = status;
 		this.timePoint = timePoint;		
 		this.catalog = catalog;
-		this.ancestor = ancestor;
-		this.historyList = null;
 	}
 	
 	public int getId() {
@@ -118,11 +105,19 @@ public class ProfilePattern implements Serializable, StatusConst {
 		this.description = descr;
 	}
 
-	public long getFilialMask() {
+	public String getSummary() {
+		return this.summary;
+	}
+
+	public void setSummary( String summary ) {
+		this.summary = summary;
+	}
+
+	public byte[] getFilialMask() {
 		return this.filialMask;
 	}
 
-	public void setFilialMask( long filialMask ) {
+	public void setFilialMask( byte[] filialMask ) {
 		this.filialMask = filialMask;
 	}
 
@@ -140,14 +135,6 @@ public class ProfilePattern implements Serializable, StatusConst {
 
 	public void setJournal( Journal journal ) {
 		this.journal = journal;
-	}
-
-	public short getPostMask() {
-		return this.postMask;
-	}
-
-	public void setPostMask( short postMask ) {
-		this.postMask = postMask;
 	}
 
 	public short getStatus() {
@@ -174,14 +161,6 @@ public class ProfilePattern implements Serializable, StatusConst {
 		this.catalog = catalog;
 	}
 	
-	public short getVersion() {
-		return this.version;
-	}
-
-	public void setVersion( short ver ) {
-		this.version = ver;
-	}
-
 	public List<ProfilePatternElement> getProfilePatternElements() {
 		return this.profilePatternElements;
 	}
@@ -201,18 +180,6 @@ public class ProfilePattern implements Serializable, StatusConst {
 		if ( ( profilePatternElements == null ) || ( element == null ) ) return element;		
 		if ( profilePatternElements.remove( element ) ) element.setProfilePattern( null );
 		return element;
-	}
-	
-	public ProfilePattern getAncestor() {
-		return this.ancestor;
-	}
-
-	public void setAncestor( ProfilePattern ancestor ) {
-		this.ancestor = ancestor;
-	}
-
-	public List<ProfilePattern> getHistoryList() {
-		return this.historyList;
 	}
 	
 	@Override

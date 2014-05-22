@@ -14,7 +14,10 @@ import java.sql.Timestamp;
 @Cacheable( false )
 @Entity
 @Table( name="Logger", schema="Minos" )
-@NamedQuery( name="Logger.findAll", query="SELECT l FROM Logger l" )
+@NamedQueries( value = {  
+		@NamedQuery( name="Logger.findAll", query="SELECT l FROM Logger l" ),
+		@NamedQuery( name="Logger.findLastOperation", query="SELECT MAX(l.id) FROM Logger l WHERE l.operationCode = :code" )
+})
 public class Logger implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -41,13 +44,23 @@ public class Logger implements Serializable {
 
 	public static final int TABLE_CODE_UNKNOWN = 0;
 	
+	public static final short OPERATION_CODE_UNKNOWN			= 0;
+	
 	public static final short OPERATION_CODE_DML_CREATE			= 1;
 	public static final short OPERATION_CODE_DML_UPDATE			= 2;
 	public static final short OPERATION_CODE_DML_DELETE			= 3;
 	public static final short OPERATION_CODE_DML_CREATE_BULK	= 11;
 	public static final short OPERATION_CODE_DML_UPDATE_BULK	= 12;
 	public static final short OPERATION_CODE_DML_DELETE_BULK	= 13;
-
+	
+	public static final short OPERATION_CODE_DDL_CREATE			= 21;
+	public static final short OPERATION_CODE_DDL_UPDATE			= 22;
+	public static final short OPERATION_CODE_DDL_DELETE			= 23;	
+	
+	public static final short OPERATION_CODE_GHOST_PACKET_MARKER	= 99;
+	public static final short OPERATION_CODE_BUILD_PACKET_MARKER	= 100;
+	public static final short OPERATION_CODE_LOADED_PACKET_MARKER	= 101;
+	
 	public Logger() { }
 	
 	public Logger( Timestamp moment, long externalId, short operationCode, 

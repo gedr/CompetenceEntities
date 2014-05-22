@@ -15,7 +15,8 @@ import javax.persistence.*;
 @NamedQuery(name="Role.findAll", query="SELECT r FROM Role r")
 public class Role implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+	public static final int FLAG_LENGTH = 15;
+	
     @TableGenerator(name="Role_Gen", table="GenI", schema="Minos",  
     		pkColumnName="TableName", valueColumnName="KeyValue",
     		pkColumnValue="ROLE_GEN", allocationSize=3)
@@ -31,11 +32,17 @@ public class Role implements Serializable {
 	private String description;
 
 	@Column(name="flag")
-	private long flag;
+	private byte[] flag;
 	
-	public Role() { }
+	public Role() { 
+		this.id = 0;
+		this.name = null;
+		this.description = null;
+		this.flag = null;		
+	}
 	
-	public Role(String name, String descr, long flag) { 
+	public Role(String name, String descr, byte[] flag) {
+		this.id = 0;
 		this.name = name;
 		this.description = descr;
 		this.flag = flag;
@@ -65,11 +72,11 @@ public class Role implements Serializable {
 		this.description = descr;
 	}
 
-	public long getFlag() {
+	public byte[] getFlag() {
 		return this.flag;
 	}
 
-	public void setFlag(long flag) {
+	public void setFlag(byte[] flag) {
 		this.flag = flag;
 	}
 

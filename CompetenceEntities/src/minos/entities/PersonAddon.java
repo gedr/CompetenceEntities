@@ -16,7 +16,7 @@ public class PersonAddon implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@Column(name="person_id")
+	@Column(name="id")
 	private int id;
 	
 	//uni-directional many-to-one association to Role

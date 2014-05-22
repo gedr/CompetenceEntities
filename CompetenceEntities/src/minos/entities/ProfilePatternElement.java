@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="ProfilePatternElement", schema="Minos")
 @NamedQuery(name="ProfilePatternElement.findAll", query="SELECT p FROM ProfilePatternElement p")
-public class ProfilePatternElement implements Serializable {
+public class ProfilePatternElement implements Serializable, StatusConst {
 	private static final long serialVersionUID = 1L;
 
 	@TableGenerator(name="PPE_Gen", table="GenI", schema="Minos",  
@@ -28,9 +28,6 @@ public class ProfilePatternElement implements Serializable {
 
 	@Column(name = "item")
 	private short item;
-	
-	@Column(name="ver")
-	private short version;	
 	
 	@Column(name="status")
 	private short status;
@@ -54,15 +51,6 @@ public class ProfilePatternElement implements Serializable {
 	@OneToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
-	
-	// history tree
-	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name="ancestor_id", referencedColumnName="id")
-	private ProfilePatternElement ancestor;
-
-	@OneToMany(mappedBy="ancestor", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@OrderBy(value="version")
-	private List<ProfilePatternElement> historyList;
 
 	@OneToMany(mappedBy="ppe", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderBy(value="item")
@@ -71,14 +59,12 @@ public class ProfilePatternElement implements Serializable {
 	public ProfilePatternElement() { }
 
 	public ProfilePatternElement(short item, Competence competence, Level minLevel,
-			ProfilePattern profilePattern, Journal journal, ProfilePatternElement ancestor) {  
+			ProfilePattern profilePattern, Journal journal) {  
 		this.item = item;
 		this.competence = competence;
 		this.minLevel = minLevel;
 		this.profilePattern = profilePattern;
 		this.journal = journal;
-		this.ancestor = ancestor;
-		this.historyList = null;
 	}
 
 	public int getId() {
@@ -121,14 +107,6 @@ public class ProfilePatternElement implements Serializable {
 		this.minLevel = minLevel;
 	}
 	
-	public short getVersion() {
-		return this.version;
-	}
-
-	public void setVersion(short ver) {
-		this.version = ver;
-	}
-	
 	public short getStatus() {
 		return this.status;
 	}
@@ -145,14 +123,6 @@ public class ProfilePatternElement implements Serializable {
 		this.profilePattern = profilePattern;
 	}
 		
-	public ProfilePatternElement getAncestor() {
-		return this.ancestor;
-	}
-
-	public void setAncestor( ProfilePatternElement ancestorProfilePatternElement ) {
-		this.ancestor = ancestorProfilePatternElement;
-	}
-
 	public List<PpeStrAtr> getAttributes() {
 		return this.attributes;
 	}
@@ -174,10 +144,6 @@ public class ProfilePatternElement implements Serializable {
 		return attrs;
 	}
 
-	public List<ProfilePatternElement> getHistoryList() {
-		return this.historyList;
-	}
-	
 	@Override
 	public int hashCode() {
 		return id;
