@@ -19,7 +19,7 @@ public class Role implements Serializable {
 	
     @TableGenerator(name="Role_Gen", table="GenI", schema="Minos",  
     		pkColumnName="TableName", valueColumnName="KeyValue",
-    		pkColumnValue="ROLE_GEN", allocationSize=3)
+    		pkColumnValue="ROLE_GEN", allocationSize=1)
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy=GenerationType.TABLE, generator="Role_Gen") 

@@ -16,7 +16,6 @@ import org.apache.openjpa.persistence.UpdateAction;
 @Entity
 @Table(name="tStatFASETSp", schema="dbo")
 @NamedQuery(name="Faset.findAll", query="SELECT f FROM Faset f")
-
 public class Faset implements Serializable {
 	private static final long serialVersionUID = 1L;
 

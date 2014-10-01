@@ -102,7 +102,7 @@ public class PersonPostRelation implements Serializable {
 
     @Override
     public String toString() {
-        return "DivisionPostAssign: [" + String.valueOf(id) + " ] ";
+        return "PersonPostRelation: [" + String.valueOf(id) + " ] ";
     }
 
 }

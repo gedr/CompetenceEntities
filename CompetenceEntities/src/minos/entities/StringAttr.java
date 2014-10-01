@@ -15,10 +15,11 @@ import javax.persistence.*;
 @NamedQuery(name="StringAttr.findAll", query="SELECT s FROM StringAttr s")
 public class StringAttr implements Serializable {
 	private static final long serialVersionUID = 1L;
+	public static final short VARIETY_POFILE_PATTERN_ELEMENT_ATTRIBUTE = 1;
 
 	@TableGenerator(name="StringAttr_Gen", table="GenL", schema="Minos",
 	pkColumnName="TableName", valueColumnName="KeyValue",
-	pkColumnValue="STRATTR_GEN", allocationSize=1)
+	pkColumnValue="STR_ATTR_GEN", allocationSize=1)
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy=GenerationType.TABLE, generator="StringAttr_Gen") 
@@ -27,6 +28,7 @@ public class StringAttr implements Serializable {
 	@Column(name="external_id")
 	private Integer externalId;
 
+	@Column(name="item")
 	private int item;
 
 	//uni-directional many-to-one association to Journal
@@ -34,7 +36,7 @@ public class StringAttr implements Serializable {
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
 
-	@Column(name="key", length=1000)
+	@Column(name="keyF", length=1000)
 	private String key;
 
 	@Basic(fetch=FetchType.LAZY)
@@ -84,7 +86,7 @@ public class StringAttr implements Serializable {
 		return this.journal;
 	}
 
-	public void setJournalId(Journal journal) {
+	public void setJournal(Journal journal) {
 		this.journal = journal;
 	}
 

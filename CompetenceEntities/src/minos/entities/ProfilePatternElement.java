@@ -58,9 +58,10 @@ public class ProfilePatternElement implements Serializable, StatusConst {
 
 	public ProfilePatternElement() { }
 
-	public ProfilePatternElement(short item, Competence competence, Level minLevel,
+	public ProfilePatternElement(short item, short status, Competence competence, Level minLevel,
 			ProfilePattern profilePattern, Journal journal) {  
 		this.item = item;
+		this.status = status;
 		this.competence = competence;
 		this.minLevel = minLevel;
 		this.profilePattern = profilePattern;
@@ -103,7 +104,7 @@ public class ProfilePatternElement implements Serializable, StatusConst {
 		return this.minLevel;
 	}
 
-	public void setMinLevel_id(Level minLevel) {
+	public void setMinLevel(Level minLevel) {
 		this.minLevel = minLevel;
 	}
 	

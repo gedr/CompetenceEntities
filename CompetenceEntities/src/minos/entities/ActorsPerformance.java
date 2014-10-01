@@ -31,9 +31,6 @@ public class ActorsPerformance implements Serializable {
 	@Column(name="cost")
 	private double cost;
 	
-	@Column(name="cver")
-	private short competenceVersion;
-
 	@ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="ppe_id", referencedColumnName="id")    
 	private ProfilePatternElement profilePatternElement; 
@@ -45,12 +42,11 @@ public class ActorsPerformance implements Serializable {
 
 	public ActorsPerformance() { }
 	
-	public ActorsPerformance( String attr, double cost, ProfilePatternElement ppe, short competenceVersion, Actors actors ) {
+	public ActorsPerformance( String attr, double cost, ProfilePatternElement ppe, Actors actors ) {
 		this.attributes = attr;
 		this.cost = cost;
 		this.profilePatternElement = ppe;
 		this.actors = actors;
-		this.competenceVersion = competenceVersion;
 	}
 
 	public long getId() {
@@ -93,14 +89,6 @@ public class ActorsPerformance implements Serializable {
 		this.actors = actor;
 	}
 	
-	public short getCompetenceVersion() {
-		return competenceVersion;
-	}
-
-	public void setCompetenceVersion(short ver) {
-		this.competenceVersion = ver;
-	}
-
 	@Override
 	public int hashCode() {
 		return Long.valueOf( id ).hashCode();

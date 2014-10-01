@@ -22,6 +22,10 @@ import java.util.List;
 public class Actors implements Serializable, StatusConst {
 	private static final long serialVersionUID = 1L;
 
+	public static final short SINNER_TYPE_UNKNOWN	= 0;
+	public static final short SINNER_TYPE_INNER 	= 1;
+	public static final short SINNER_TYPE_ALIEN 	= 2;
+
     @TableGenerator(name="Actors_Gen", table="GenL", schema="Minos", 
     		pkColumnName="TableName", valueColumnName="KeyValue",
     		pkColumnValue="ACTORS_GEN", allocationSize=1)
@@ -93,15 +97,32 @@ public class Actors implements Serializable, StatusConst {
 				( ( val.getVariety() == ActorsInfo.VARIETY_SPEC ) || 
 						( val.getVariety() == flag ) ) ); 
 	}
-	
-	private Actors( short gauge, Timestamp finish, short status, Measure measure, Profile profile, 
+
+	public Actors() { 
+		minos = null;
+		internalSinner = null;
+		alienSinner = null;
+		alienSinnerVersion = 0;
+		sinnerType = SINNER_TYPE_UNKNOWN;
+	}
+
+	private Actors( Person minos, short sinnerType, short gauge, Timestamp finish, short status, Measure measure, Profile profile, 
 			Journal journal, ActorsInfo testMode, ActorsInfo reserveLevel, ActorsInfo reserveType, 
 			List<ActorsPerformance> lap ) {
-		if ( ( finish == null ) || ( measure == null ) || 
-				( journal == null ) ) throw new NullArgumentException( "Actors.Actors() have null argument" );
-		if ( !checkActorsInfo( testMode, ActorsInfo.VARIETY_MODE ) ) throw new IllegalArgumentException( "testMode have illegal value" );
-		if ( !checkActorsInfo( reserveLevel, ActorsInfo.VARIETY_LEVEL ) ) throw new IllegalArgumentException( "reserveLevel have illegal value" );
-		if ( !checkActorsInfo( reserveType, ActorsInfo.VARIETY_TYPE ) ) throw new IllegalArgumentException( "reserveType have illegal value" );
+		if ( ( finish == null ) || ( measure == null ) ) {
+			throw new NullArgumentException( "Actors.Actors() : have null argument" );			
+		}
+		if ( !checkActorsInfo( testMode, ActorsInfo.VARIETY_MODE ) ) {
+			throw new IllegalArgumentException( "Actors.Actors() : testMode have illegal value" );
+		}
+		if ( !checkActorsInfo( reserveLevel, ActorsInfo.VARIETY_LEVEL ) ) {
+			throw new IllegalArgumentException( "Actors.Actors() : reserveLevel have illegal value" );
+		}
+		if ( !checkActorsInfo( reserveType, ActorsInfo.VARIETY_TYPE ) ) {
+			throw new IllegalArgumentException( "Actors.Actors() : reserveType have illegal value" );
+		}
+		this.sinnerType = sinnerType;
+		this.minos = minos;
 		this.gauge = gauge;
 		this.finish = finish;
 		this.status = status;
@@ -114,30 +135,20 @@ public class Actors implements Serializable, StatusConst {
 		this.actorsPerformances = lap;		
 	}
 
-	public static final short SINNER_TYPE_UNKNOWN	= 0;
-	public static final short SINNER_TYPE_INNER 	= 1;
-	public static final short SINNER_TYPE_ALIEN 	= 2;
-
-	public Actors() { }
-	
 	public Actors( Person minos, Person sinner, short gauge, Timestamp finish, short status, Measure measure, Profile profile, 
 			Journal journal, ActorsInfo testMode, ActorsInfo reserveLevel, ActorsInfo reserveType, List<ActorsPerformance> lap ) {
-		this(gauge, finish, status, measure, profile, journal, testMode, reserveLevel, reserveType, lap);
-		this.minos = minos;
+		this( minos, SINNER_TYPE_INNER, gauge, finish, status, measure, profile, journal, testMode, reserveLevel, reserveType, lap );
 		this.internalSinner = sinner;
 		this.alienSinnerVersion = 0;
 		this.alienSinner = null;
-		this.sinnerType = SINNER_TYPE_INNER;
 	}
 
 	public Actors( Person minos, Alien sinner, short sinnerVer, short gauge, Timestamp finish, short status, Measure measure, Profile profile, 
 			Journal journal, ActorsInfo testMode, ActorsInfo reserveLevel, ActorsInfo reserveType, List<ActorsPerformance> lap ) {
-		this(gauge, finish, status, measure, profile, journal, testMode, reserveLevel, reserveType, lap);
-		this.minos = minos;
+		this( minos, SINNER_TYPE_ALIEN, gauge, finish, status, measure, profile, journal, testMode, reserveLevel, reserveType, lap );
 		this.internalSinner = null;
 		this.alienSinnerVersion = sinnerVer;
 		this.alienSinner = sinner;
-		this.sinnerType = SINNER_TYPE_ALIEN;
 	}
 
 	public long getId() {

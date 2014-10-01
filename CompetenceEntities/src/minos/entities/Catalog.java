@@ -106,6 +106,7 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
    		this.profilePatterns = profilePatterns;
    		this.competences = null;
    		this.journal = journal;
+   		this.historyList = null;
    	}   	
 
    	public int getId() {
@@ -207,7 +208,7 @@ public class Catalog implements Serializable, VarietyConst, StatusConst {
 	
 	public Competence addCompetence(Competence competence) {
 		if ( competence == null ) return null;
-		if(competences == null) this.competences = new ArrayList<Competence>();
+		if ( competences == null ) this.competences = new ArrayList<Competence>();
 		this.competences.add(competence);
 		competence.setCatalog(this);
 		return competence;

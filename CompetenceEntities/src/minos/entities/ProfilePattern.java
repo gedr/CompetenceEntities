@@ -19,6 +19,7 @@ import java.util.List;
 @NamedQuery(name="ProfilePattern.findAll", query="SELECT p FROM ProfilePattern p")
 public class ProfilePattern implements Serializable, StatusConst {
 	private static final long serialVersionUID = 1L;
+	public static final int MAX_FILIAL_MASK_SIZE = 10;
 
 	@TableGenerator(name="PP_Gen", table="GenI", schema="Minos",  
 			pkColumnName="TableName", valueColumnName="KeyValue",
@@ -70,15 +71,17 @@ public class ProfilePattern implements Serializable, StatusConst {
 	
 	public ProfilePattern() { }
 	
-	public ProfilePattern( String name, String descr, byte[] filialMask, int item, short status, 
-			Timestamp timePoint, Catalog catalog ) {
+	public ProfilePattern( String name, String descr, byte[] filialMask, int item, short status, String summary,
+			Timestamp timePoint, Catalog catalog, Journal journal ) {
 		this.name = name;
 		this.description = descr;
 		this.filialMask = filialMask;
 		this.item = item;
 		this.status = status;
+		this.summary = summary;
 		this.timePoint = timePoint;		
 		this.catalog = catalog;
+		this.journal = journal;
 	}
 	
 	public int getId() {

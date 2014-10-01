@@ -43,7 +43,6 @@ public class PpeStrAtr implements Serializable {
 	public PpeStrAtr() { }
 	
 	public PpeStrAtr( StringAttr strAttr, ProfilePatternElement ppe, short item, Journal journal ) {
-		if ( ( strAttr == null ) || ( ppe == null ) || ( journal == null ) ) throw new IllegalArgumentException();
 		this.stringAttr = strAttr;
 		this.ppe = ppe;
 		this.item = item;

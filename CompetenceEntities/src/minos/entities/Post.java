@@ -1,26 +1,18 @@
 package minos.entities;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.*;
 
 import org.apache.openjpa.persistence.ReadOnly;
 import org.apache.openjpa.persistence.UpdateAction;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-
-
-/**
- * The persistent class for the tOrgStatDol database table.
- * 
- */
-@Cacheable(true)
 @Entity
-@Table(name="tOrgStatDol", schema="dbo")
-@NamedQuery(name="EstablishedPost.findAll", query="SELECT e FROM EstablishedPost e")
-public class EstablishedPost implements Serializable {
+@Table(name="tStatDolSP")
+@NamedQuery(name="Post.findAll", query="SELECT p FROM Post p")
+public class Post implements Serializable {
 	// =================================================================================================================
 	// Constants
 	// =================================================================================================================
@@ -31,9 +23,9 @@ public class EstablishedPost implements Serializable {
 	// =================================================================================================================
 	@Id
 	@ReadOnly(value=UpdateAction.IGNORE)
-	@Column(name = "tOrgStatDolId")
+	@Column(name="tStatDolSPId")
 	private int id;
-
+	
 	@ReadOnly(value=UpdateAction.IGNORE)
 	@Column(name="BegDA")
 	private Timestamp beginDate;
@@ -41,23 +33,19 @@ public class EstablishedPost implements Serializable {
 	@ReadOnly(value=UpdateAction.IGNORE)
 	@Column(name="EndDA")
 	private Timestamp endDate;
-	
+
 	@ReadOnly(value=UpdateAction.IGNORE)
-	@Column(name="IsDelete")
-	private int isdelete;
+	@Column(name="FullTXT")
+	private String name;
+
+	@ReadOnly(value=UpdateAction.IGNORE)
+	@Column(name="IsDeleted")
+	private int isDeleted;
 	
 	@ReadOnly(value=UpdateAction.IGNORE)
 	@Column(name="KPERS")
 	private int kpers;
-
-	@ReadOnly(value=UpdateAction.IGNORE)
-	@Column(name="V0001")
-	private String name;
-
-	@ReadOnly(value=UpdateAction.IGNORE)
-	@Column(name="OtizOk")
-	private int otizOk;
-
+	
 	@ReadOnly(value=UpdateAction.IGNORE)
 	@Column(name="Faset_02")
 	private int faset2; 
@@ -78,29 +66,14 @@ public class EstablishedPost implements Serializable {
 	@Column(name="Faset_12")
 	private int faset12;
 
-	@ReadOnly(value=UpdateAction.IGNORE)
-	@Column(name="Faset_99")
-	private int faset99;
-
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="tOrgStruId", referencedColumnName="tOrgStruID")
-	private Division division;
-
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="tStatBDolSPId", referencedColumnName="tStatBDolSPId")
-	private BasisPost basisPost;
-	
-	@OneToMany(mappedBy="epost", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@OrderBy(value="item")
-	private List<PersonPostRelation> personPostRelations;
-
-	@OneToMany(mappedBy="establishedPost", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})	
-	private List<Profile> profiles;
+	//bi-directional many-to-one association to OrganizationUnit
+	@OneToMany(mappedBy="post")
+	private List<OrgUnit> orgUnits;
 
 	// =================================================================================================================
 	// Constructors
 	// =================================================================================================================
-	public EstablishedPost() { }
+	public Post() { }
 
 	// =================================================================================================================
 	// Getter & Setter
@@ -108,7 +81,7 @@ public class EstablishedPost implements Serializable {
 	public int getId() {
 		return id;
 	}
-	
+
 	public Timestamp getBeginDate() {
 		return this.beginDate;
 	}
@@ -117,22 +90,18 @@ public class EstablishedPost implements Serializable {
 		return this.endDate;
 	}
 
-	public int getIsdelete() {
-		return this.isdelete;
-	}
-
-	public int getKpers() {
-		return this.kpers;
-	}
-
 	public String getName() {
 		return this.name;
 	}
 
-	public int getOtizOK() {
-		return this.otizOk;
+	public int getIsDeleted() {
+		return this.isDeleted;
 	}
-
+	
+	public int getKpers() {
+		return this.kpers;
+	}
+	
 	public int getFaset2() {
 		return this.faset2;
 	}
@@ -153,42 +122,8 @@ public class EstablishedPost implements Serializable {
 		return this.faset12;
 	}
 
-	public int getFaset99() {
-		return this.faset99;
-	}
-
-	public Division getDivision() {
-		return this.division;
-	}
-
-	public BasisPost getBasisPost() {
-		return this.basisPost;
-	}
-	
-	public List<PersonPostRelation> getPersonPostRelations() {
-		return this.personPostRelations;
-	}
-	
-	public List<Profile> getProfiles() {
-		return this.profiles;
-	}
-
-	public void setProfiles( List<Profile> profiles ) {
-		this.profiles = profiles;
-	}
-	
-	public Profile addProfile( Profile profile ) {
-		if ( profile == null ) return profile;
-		if ( profiles == null ) profiles = new ArrayList<Profile>();
-		profiles.add( profile );
-		profile.setEstablishedPost( this );
-		return profile;
-	}
-
-	public Profile removeProfile( Profile profile ) {
-		if ( ( profiles == null ) || ( profile == null ) ) return profile;
-		if ( profiles.remove( profile ) ) profile.setEstablishedPost( null );
-		return profile;
+	public List<OrgUnit> getOrganizationUnits() {
+		return this.orgUnits;
 	}
 
 	// =================================================================================================================
@@ -201,15 +136,15 @@ public class EstablishedPost implements Serializable {
 
 	@Override
 	public boolean equals( Object obj ) {
-		if ( this == obj ) return true;
 		if ( obj == null ) return false;        
-		if ( !( obj instanceof EstablishedPost ) ) return false;        
-		if ( this.id != ( ( EstablishedPost ) obj ).id ) return false;
+		if ( this == obj ) return true;
+		if ( !( obj instanceof Post ) ) return false;        
+		if( this.id != ( ( Post ) obj ).id ) return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "EstablishedPost: [" + String.valueOf( id ) + "] " + name;
+		return "Post: [" + String.valueOf( id ) + "] " + name;
 	}
 }

@@ -25,6 +25,8 @@
 		<class>minos.entities.Measure</class>
 		<class>minos.entities.Logger</class>
 		<class>minos.entities.Faset</class>
+		<class>minos.entities.OrgUnit</class>
+		<class>minos.entities.Post</class>
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://192.168.56.2:1433;databaseName=gedr"/>
 			<property name="javax.persistence.jdbc.user" value="sa"/>

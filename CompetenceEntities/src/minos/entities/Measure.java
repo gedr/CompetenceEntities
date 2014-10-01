@@ -40,6 +40,10 @@ public class Measure implements Serializable {
     @Column(name="stop")
 	private Timestamp stop;
     
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="boffice_id", referencedColumnName="tOrgStruID")
+	private Division branchOffice;
+    
 	//uni-directional many-to-one association to Journal
 	@OneToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="journal_id", referencedColumnName="id")
@@ -82,6 +86,14 @@ public class Measure implements Serializable {
 
 	public void setDescription( String descr ) {
 		this.description = descr;
+	}
+
+	public Division getBranchOffice() {
+		return branchOffice;
+	}
+
+	public void setBranchOffice( Division branchOffice ) {
+		this.branchOffice = branchOffice;
 	}
 
 	public Journal getJournal() {
@@ -148,4 +160,5 @@ public class Measure implements Serializable {
 	public String toString() {
 		return "Measure: [" + String.valueOf(id) + "] " + name;
 	}
+
 }

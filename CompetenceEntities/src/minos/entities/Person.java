@@ -8,6 +8,7 @@ import org.apache.openjpa.persistence.ReadOnly;
 import org.apache.openjpa.persistence.UpdateAction;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -20,8 +21,19 @@ import java.util.List;
 @Table(name="tPersona", schema="dbo")
 @NamedQuery(name="Person.findAll", query="SELECT p FROM Person p")
 public class Person implements Serializable {
-	private static final long serialVersionUID = 1L;
+	// =================================================================================================================
+	// Constants
+	// =================================================================================================================
+	private	static final long	serialVersionUID	= 1L;
+	
+	public	static final int	STATUS_DISMISS		= 0;
+	public	static final int 	STATUS_SUSPEND		= 1;
+	public	static final int 	STATUS_PENSIONER	= 2;
+	public	static final int 	STATUS_ACTIVE		= 3;
 
+	// =================================================================================================================
+	// Fields
+	// =================================================================================================================
 	@Id
 	@ReadOnly(value=UpdateAction.IGNORE)
 	@Column(name="tPersonaId")
@@ -64,16 +76,19 @@ public class Person implements Serializable {
 	private String tab;
 	
 	@OneToMany(mappedBy="person", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@OrderBy(value="item")
 	private List<PersonPostRelation> personPostRelations;
-
-	public static final int STATUS_DISMISS		= 0;
-	public static final int STATUS_SUSPEND		= 1;
-	public static final int STATUS_PENSIONER	= 2;
-	public static final int STATUS_ACTIVE		= 3;
 	
+	@OneToOne(mappedBy="person", fetch=FetchType.LAZY)
+	private PersonAddon personAddon;
+
+	// =================================================================================================================
+	// Constructors
+	// =================================================================================================================
 	public Person() { }
 
+	// =================================================================================================================
+	// Getter & Setter
+	// =================================================================================================================
 	public int getId() {
 		return id;
 	}
@@ -118,29 +133,13 @@ public class Person implements Serializable {
 		return this.personPostRelations;
 	}
 	
-	public String getFullName() {
-		StringBuilder sb = new StringBuilder();
-		sb.append( surname == null ? " " : surname ).append( " " ).
-		append( name == null ? " " : name ).append( " " ).
-		append( patronymic == null ? " " : patronymic ).append( " " );
-		return sb.toString();		
-	}
-	
-	public String getSurnameAndInitials(boolean initialsAsFirst, boolean closelyPacket) {
-		StringBuilder sb = new StringBuilder();
-		if ( !initialsAsFirst ) sb.append( surname == null ? "" : surname ).append( closelyPacket ? "" : " " );
-		sb.append( name == null ? "" : String.valueOf( name.charAt( 0 ) ) ).append( closelyPacket ? "" : "." );
-		sb.append( patronymic == null ? "" : String.valueOf( patronymic.charAt( 0 ) ) ).append( closelyPacket ? "" : "." );
-		if ( initialsAsFirst ) sb.append( closelyPacket ? "" : " " ).append( surname == null ? "" : surname );		
-		return sb.toString();		
+	public PersonAddon getPersonAddon() {
+		return personAddon;
 	}
 
-	/*
-	public PersonLogin getPersonLogin() {
-		return this.personLogin;
-	}
-	*/
-    
+	// =================================================================================================================
+	// Methods for/from SuperClass/Interfaces
+	// =================================================================================================================
 	@Override
     public int hashCode() {
         return id;
@@ -159,4 +158,54 @@ public class Person implements Serializable {
     public String toString() {
         return "Person: [" + String.valueOf(id) + " ] " + surname + " " + name + " " + patronymic;
     }
+
+	// =================================================================================================================
+	// Methods
+	// =================================================================================================================
+	/**
+	 * make full name from fields surname_name_patronymic
+	 * @return string contain full name
+	 */
+	public String getFullName() {
+		StringBuilder sb = new StringBuilder();
+		sb.append( surname == null ? " " : surname ).append( " " ).
+		append( name == null ? " " : name ).append( " " ).
+		append( patronymic == null ? " " : patronymic ).append( " " );
+		return sb.toString();		
+	}
+	
+	/**
+	 * make name as surname and initials
+	 * @param initialsAsFirst - initials flag (initials before surname if true)
+	 * @param closelyPacket - name flag (name without dot and space if true)
+	 * @return string contain surname and initials
+	 */
+	public String getSurnameAndInitials( boolean initialsAsFirst, boolean closelyPacket ) {
+		StringBuilder sb = new StringBuilder();
+		if ( !initialsAsFirst ) sb.append( surname == null ? "" : surname ).append( closelyPacket ? "" : " " );
+		sb.append( name == null ? "" : String.valueOf( name.charAt( 0 ) ) ).append( closelyPacket ? "" : "." );
+		sb.append( patronymic == null ? "" : String.valueOf( patronymic.charAt( 0 ) ) ).append( closelyPacket ? "" : "." );
+		if ( initialsAsFirst ) sb.append( closelyPacket ? "" : " " ).append( surname == null ? "" : surname );		
+		return sb.toString();		
+	}
+	
+	/**
+	 * calculate person's age
+	 * @param onDate - date for calculate, if null to use current date
+	 * @return person's age
+	 */
+	public int getAge( java.util.Date onDate ) {
+		if ( getBirthdate() == null ) throw new NullPointerException( "Person birthdate is null" );
+		
+		Calendar today = Calendar.getInstance();
+		if ( onDate != null ) today.setTime( onDate );
+		
+		Calendar birthday = Calendar.getInstance();		
+		birthday.setTime( getBirthdate() );
+		birthday.add( Calendar.DAY_OF_MONTH, -1 ); // include day of birth
+		
+		int age = today.get( Calendar.YEAR ) - birthday.get( Calendar.YEAR );
+		if ( today.get( Calendar.DAY_OF_YEAR ) <= birthday.get( Calendar.DAY_OF_YEAR ) ) age--;
+		return age;
+	}
 }

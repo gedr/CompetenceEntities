@@ -1,38 +1,36 @@
 package minos.entities;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import javax.persistence.*;
 
 import org.apache.openjpa.persistence.ReadOnly;
 import org.apache.openjpa.persistence.UpdateAction;
 
-import java.sql.Timestamp;
-import java.util.List;
-
-
-/**
- * The persistent class for the tOrgStru database table.
- * 
- */
-@Cacheable(true)
 @Entity
-@Table(name="tOrgStru", schema="dbo")
-@NamedQuery(name="Division.findAll", query="SELECT d FROM Division d")
-public class Division implements Serializable {
+@Table( name="tOrgAssignCur" )
+@NamedQuery( name="OrgUnit.findAll", query="SELECT ou FROM OrgUnit ou" )
+public class OrgUnit implements Serializable {
 	// =================================================================================================================
 	// Constants
 	// =================================================================================================================
 	private static final long serialVersionUID = 1L;
+	
+	public static final int STATE_ACTIVE 	= 3;
+	public static final int STATE_FIRED 	= 1;
+	
+	public static final int TYPE_TEMPORARY 	= 1;
+	public static final int TYPE_PERMANENTLY= 0;
 
 	// =================================================================================================================
 	// Fields
 	// =================================================================================================================
 	@Id
 	@ReadOnly(value=UpdateAction.IGNORE)
-	@Column(name="tOrgStruID")
+	@Column(name="tOrgAssignCurID")
 	private int id;
-
+	
 	@ReadOnly(value=UpdateAction.IGNORE)
 	@Column(name="BegDA")
 	private Timestamp beginDate;
@@ -42,42 +40,35 @@ public class Division implements Serializable {
 	private Timestamp endDate;
 
 	@ReadOnly(value=UpdateAction.IGNORE)
-	@Column(name="FullName")
-	private String fullName;
+	@Column(name="State")
+	private int state;  // 1-fired, 3-active
 
 	@ReadOnly(value=UpdateAction.IGNORE)
-	@Column(name="SortOrder")
-	private int sortOrder;
-	
+	@Column(name="TypeTD")
+	private int typeTD; // 0-permanently, 1-temporary
+
+	//bi-directional many-to-one association to Person
 	@ReadOnly(value=UpdateAction.IGNORE)
-	@Column(name="Isdelete")
-	private int isdelete;
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="tPersonaId", referencedColumnName="tPersonaId")
+	private Person person;
 
+	//bi-directional many-to-one association to Division
 	@ReadOnly(value=UpdateAction.IGNORE)
-	@Column(name="OtizOk")
-	private int otizOk;
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="tOrgStruId", referencedColumnName="tOrgStruID")
+	private Division division;
 
-	// division's tree
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="Parent", referencedColumnName="tOrgStruID")    
-	private Division parentDivision; 
-
-	@OneToMany(mappedBy="parentDivision", fetch=FetchType.LAZY)
-	@OrderBy(value="name")
-	private List<Division> subDivisions;
-
-	@OneToMany(mappedBy="division", fetch=FetchType.LAZY)
-	@OrderBy(value="kpers")
-	private List<EstablishedPost> establishedPosts;
-	
-	//bi-directional many-to-one association to OrganizationUnit
-	@OneToMany(mappedBy="division")
-	private List<OrgUnit> orgUnits;
+	//bi-directional many-to-one association to Position
+	@ReadOnly(value=UpdateAction.IGNORE)
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="tStatDolSpId", referencedColumnName="tStatDolSPId")
+	private Post post;
 
 	// =================================================================================================================
 	// Constructors
 	// =================================================================================================================
-	public Division() { }
+	public OrgUnit() { }
 
 	// =================================================================================================================
 	// Getter & Setter
@@ -94,38 +85,26 @@ public class Division implements Serializable {
 		return this.endDate;
 	}
 
-	public String getFullName() {
-		return this.fullName;
+	public int getState() {
+		return this.state;
 	}
 
-	public int getIsdelete() {
-		return this.isdelete;
+	public int getTypeTD() {
+		return this.typeTD;
 	}
 
-	public int getOtizOk() {
-		return this.otizOk;
+	public Person getPerson() {
+		return this.person;
 	}
 
-	public int getSortOrder() {
-		return this.sortOrder;
+	public Division getDivision() {
+		return this.division;
 	}
 
-	public Division getParentDivision() {
-		return this.parentDivision;
-	}
-
-	public List<Division> getSubDivision() {
-		return this.subDivisions;
+	public Post getPost() {
+		return this.post;
 	}
 	
-	public List<EstablishedPost> getEstablishedPosts() {
-		return establishedPosts;
-	}
-
-	public List<OrgUnit> getOrgUnits() {
-		return this.orgUnits;
-	}
-
 	// =================================================================================================================
 	// Methods for/from SuperClass/Interfaces
 	// =================================================================================================================
@@ -135,16 +114,16 @@ public class Division implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals( Object obj ) {
+		if ( obj == null ) return false;        
 		if ( this == obj ) return true;
-		if ( obj == null ) return false;
-		if ( !( obj instanceof Division ) ) return false;
-		if ( this.id != ( ( Division ) obj ).id ) return false;
+		if ( !( obj instanceof Catalog ) ) return false;        
+		if( this.id != ( ( OrgUnit ) obj ).id ) return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Division: [" + String.valueOf( id ) + "] " + fullName;
+		return "OrgUnit: [" + String.valueOf( id ) + "] ";
 	}
 }

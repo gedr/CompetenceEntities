@@ -159,7 +159,7 @@ public class Competence implements Serializable, VarietyConst, StatusConst {
 		return this.ancestor;
 	}
 
-	public void setAncestorCompetence(Competence ancestor) {
+	public void setAncestor(Competence ancestor) {
 		this.ancestor = ancestor;
 	}
 

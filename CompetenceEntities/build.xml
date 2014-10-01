@@ -8,7 +8,7 @@
 
 	
 	<path id="openJPA.userclasspath">
-         <pathelement location="c:/DevTools/Lib/java/apache-openjpa-2.2.2/openjpa-all-2.2.2.jar"/> 
+         <pathelement location="d:/Dev/lib/apache-openjpa-2.2.2/openjpa-all-2.2.2.jar"/> 
 		 <!-- <pathelement location="d:/dev/lib/apache-openjpa-2.2.2/openjpa-all-2.2.2.jar"/>  -->
     </path>
 	
@@ -16,7 +16,7 @@
 		<pathelement location="build/classes"/>
 		
 		<!-- lib contains all of the jars that came with the OpenJPA binary download -->
-		<fileset dir="c:/DevTools/Lib/java/apache-openjpa-2.2.2/">
+		<fileset dir="d:/Dev/lib/apache-openjpa-2.2.2/">
 		<!-- <fileset dir="d:/dev/lib/apache-openjpa-2.2.2/"> -->
 			<include name="**/*.jar"/>
 		</fileset>

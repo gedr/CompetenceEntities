@@ -14,8 +14,14 @@ import javax.persistence.*;
 @Table(name="Profile", schema="Minos")
 @NamedQuery(name="Profile.findAll", query="SELECT p FROM Profile p")
 public class Profile implements Serializable {
+	// =================================================================================================================
+	// Constants
+	// =================================================================================================================
 	private static final long serialVersionUID = 1L;
-
+	
+	// =================================================================================================================
+	// Fields
+	// =================================================================================================================
     @TableGenerator(name="Profile_Gen", table="GenL", schema="Minos",
     		pkColumnName="TableName", valueColumnName="KeyValue",
     		pkColumnValue="PROFILE_GEN", allocationSize=1)
@@ -29,6 +35,14 @@ public class Profile implements Serializable {
 	private EstablishedPost establishedPost; 
 
     @ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name="post_id", referencedColumnName="tStatDolSPId")    
+	private Post post; 
+
+    @ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name="division_id", referencedColumnName="tOrgStruID")    
+	private Division division; 
+    
+    @ManyToOne(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name="pp_id", referencedColumnName="id")    
 	private ProfilePattern profilePattern; 
 
@@ -37,15 +51,30 @@ public class Profile implements Serializable {
 	@JoinColumn(name="journal_id", referencedColumnName="id")
 	private Journal journal;
 
+	// =================================================================================================================
+	// Constructors
+	// =================================================================================================================
 	public Profile() { }
-	
+
 	public Profile( EstablishedPost epost, ProfilePattern pp, Journal journal ) {
-		if ( ( epost == null ) || ( pp == null ) || ( journal == null ) ) throw new IllegalArgumentException();
 		this.establishedPost = epost;
 		this.profilePattern = pp;
-		this.journal = journal;		
+		this.journal = journal;	
+		this.division = null;
+		this.post = null;
 	}	
 
+	public Profile( Division division, Post post, ProfilePattern pp, Journal journal ) {
+		this.establishedPost = null;
+		this.profilePattern = pp;
+		this.journal = journal;	
+		this.division = division;
+		this.post = post;
+	}	
+
+	// =================================================================================================================
+	// Getter & Setter
+	// =================================================================================================================
 	public long getId() {
 		return this.id;
 	}
@@ -59,8 +88,23 @@ public class Profile implements Serializable {
 	}
 
 	public void setEstablishedPost( EstablishedPost epost ) {
-		if ( epost == null ) throw new IllegalArgumentException();
 		this.establishedPost = epost;
+	}
+
+	public Post getPost() {
+		return this.post;
+	}
+
+	public void setPost( Post post ) {
+		this.post = post;
+	}
+
+	public Division getDivision() {
+		return this.division;
+	}
+
+	public void setDivision( Division division ) {
+		this.division = division;
 	}
 
 	public ProfilePattern getProfilePattern() {
@@ -81,6 +125,9 @@ public class Profile implements Serializable {
 		this.journal = journal;
 	}
 
+	// =================================================================================================================
+	// Methods for/from SuperClass/Interfaces
+	// =================================================================================================================
 	@Override
 	public int hashCode() {
 		return Long.valueOf( id ).hashCode();
